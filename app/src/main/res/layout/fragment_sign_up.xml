@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/title_bar"/>
 
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -64,13 +63,16 @@
                 android:weightSum="10"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
-                <TextView
+                <EditText
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="9"
                     android:text="user123"
                     android:layout_marginLeft="10dp"
-                    android:id="@+id/userName"/>
+                    android:id="@+id/userName"
+                    android:imeOptions="actionDone"
+                    android:maxLength="30"
+                    android:background="#00000000"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

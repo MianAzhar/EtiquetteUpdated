@@ -7,32 +7,22 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
-import com.EA.Scenario.etiquette.adapters.CommentListAdapter;
-
-import java.util.ArrayList;
+import com.EA.Scenario.etiquette.activities.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AnswerFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
-
-
-
-    ListView list;
-    ArrayList<String> arrayList;
-    CommentListAdapter ad;
 
     public AnswerFragment() {
         // Required empty public constructor
@@ -56,35 +46,10 @@ public class AnswerFragment extends android.support.v4.app.Fragment implements V
         ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
         submitComment.setOnClickListener(this);
 
-        list = (ListView)getActivity().findViewById(R.id.commentList);
-        arrayList = new ArrayList<>();
-
-        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-
-        ad = new CommentListAdapter(getActivity(), arrayList);
-        list.setAdapter(ad);
-
-        list.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-                }
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
-
         ScrollView scroll = (ScrollView)getActivity().findViewById(R.id.answerScroll);
+
+        ImageView moreComments = (ImageView)getActivity().findViewById(R.id.loadComments);
+        moreComments.setOnClickListener(this);
     }
 
     @Override
@@ -111,11 +76,17 @@ public class AnswerFragment extends android.support.v4.app.Fragment implements V
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                arrayList.add(text);
+                MainActivity.arrayList.add(text);
                 ((EditText)getActivity().findViewById(R.id.commentText)).setText("");
-                ad.notifyDataSetChanged();
                 Toast.makeText(getActivity(), "Comment added", Toast.LENGTH_SHORT).show();
             }
+        }
+        else if(view.getId() == R.id.loadComments)
+        {
+            CommentsFragment newFrag = new CommentsFragment();
+            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+            trans.addToBackStack(null);
+            trans.replace(R.id.fragment_container, newFrag, "CommentsFragment").commit();
         }
     }
 

@@ -1,13 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.EA.Scenario.etiquette.fragments.PopularFragment"
+    tools:context="com.EA.Scenario.etiquette.fragments.CommentsFragment"
     android:orientation="vertical"
     android:weightSum="10"
     android:background="@drawable/bg">
 
     <FrameLayout
-
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.8"
@@ -27,7 +26,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:layout_gravity="center"
-            android:text="@string/popular_text" />
+            android:text="Comments" />
 
     </FrameLayout>
 
@@ -35,40 +34,52 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8.6"
+        android:layout_weight="9.2"
         android:layout_marginTop="5dp"
-        android:id="@+id/popularList"
+        android:id="@+id/commentList"
         android:layout_marginLeft="10dp"
-        android:dividerHeight="5dp"
         android:background="#00000000"
         android:scrollbarStyle="outsideInset" />
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.6">
+        android:layout_height="wrap_content"
+        android:background="@drawable/submit_bg"
+        android:layout_marginTop="10dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/comment_icon"
+                android:layout_gravity="center_vertical"/>
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Submit your comment"
+                android:background="#00000000"
+                android:layout_marginLeft="3dp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:lines="1"
+                android:imeOptions="actionDone"
+                android:id="@+id/commentText"/>
+        </LinearLayout>
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/popularButton_popular"
-            android:layout_gravity="bottom"
-            android:background="@drawable/popular_selected"/>
+            android:background="@drawable/submit_button"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:id="@+id/submitComment"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/latestButton_popular"
-            android:layout_gravity="bottom"
-            android:background="@drawable/latest"/>
+    </FrameLayout>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/categoryButton_popular"
-            android:layout_gravity="bottom"
-            android:background="@drawable/category"/>
-    </LinearLayout>
 
 </LinearLayout>

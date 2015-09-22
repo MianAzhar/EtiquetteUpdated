@@ -13,17 +13,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.adapters.CommentListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NoChoiceFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+public class CommentsFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    public NoChoiceFragment() {
+    CommentListAdapter ad;
+
+    public CommentsFragment() {
         // Required empty public constructor
     }
 
@@ -32,21 +36,25 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_no_choice, container, false);
+        return inflater.inflate(R.layout.fragment_comments, container, false);
     }
 
     @Override
-    public void onActivityCreated(Bundle bundle) {
+    public void onActivityCreated(Bundle bundle)
+    {
         super.onActivityCreated(bundle);
-
-        ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
-        submitComment.setOnClickListener(this);
 
         ImageView menu = (ImageView) getActivity().findViewById(R.id.drawMenu);
         menu.setOnClickListener(this);
 
-        ImageView moreComments = (ImageView)getActivity().findViewById(R.id.loadComments);
-        moreComments.setOnClickListener(this);
+        ListView list = (ListView)getActivity().findViewById(R.id.commentList);
+
+
+        ad = new CommentListAdapter(getActivity(), MainActivity.arrayList);
+        list.setAdapter(ad);
+
+        ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
+        submitComment.setOnClickListener(this);
     }
 
     @Override
@@ -75,16 +83,11 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
                 }
                 MainActivity.arrayList.add(text);
                 ((EditText)getActivity().findViewById(R.id.commentText)).setText("");
+                ad.notifyDataSetChanged();
                 Toast.makeText(getActivity(), "Comment added", Toast.LENGTH_SHORT).show();
             }
         }
-        else if(view.getId() == R.id.loadComments)
-        {
-            CommentsFragment newFrag = new CommentsFragment();
-            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-            trans.addToBackStack(null);
-            trans.replace(R.id.fragment_container, newFrag, "CommentsFragment").commit();
-        }
     }
+
 
 }

@@ -3,12 +3,17 @@ package com.EA.Scenario.etiquette.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.EA.Scenario.etiquette.R;
 
@@ -17,6 +22,9 @@ import com.EA.Scenario.etiquette.R;
  */
 public class EditProfileFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
+    private static final int SELECT_PICTURE = 1;
+    private static final int TAKE_PICTURE = 1234;
+    Dialog dialog;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -35,8 +43,38 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
     {
         super.onActivityCreated(bundle);
 
+        dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_dialog);
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        ImageButton cam = (ImageButton)dialog.findViewById(R.id.fromCamera);
+        //cam.setOnClickListener(this);
+
+        ImageButton  gal = (ImageButton)dialog.findViewById(R.id.fromGallery);
+        //gal.setOnClickListener(this);
+
         ImageButton changePic = (ImageButton)getActivity().findViewById(R.id.editPic);
         changePic.setOnClickListener(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TAKE_PICTURE && resultCode == getActivity().RESULT_OK) {
+            dialog.hide();
+            Bitmap bmp = (Bitmap) data.getExtras().get("data");
+            ImageView img = (ImageView) getActivity().findViewById(R.id.profilePic);
+            img.setImageBitmap(bmp);
+        }
+        else if (resultCode == getActivity().RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                dialog.hide();
+                Uri selectedImageUri = data.getData();
+                ImageView image = (ImageView)getActivity().findViewById(R.id.profilePic);
+                image.setImageURI(selectedImageUri);
+            }
+        }
     }
 
     @Override
@@ -44,12 +82,19 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
     {
         if(view.getId() == R.id.editPic)
         {
-            Dialog dialog = new Dialog(getActivity());
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.custom_dialog);
-            Window window = dialog.getWindow();
-            window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             dialog.show();
+        }
+        else if(view.getId() == R.id.fromCamera)
+        {
+            Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(picIntent, TAKE_PICTURE);
+        }
+        else if(view.getId() == R.id.fromGallery)
+        {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
         }
     }
 

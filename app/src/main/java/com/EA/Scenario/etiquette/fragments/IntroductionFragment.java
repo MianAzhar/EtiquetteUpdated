@@ -81,6 +81,8 @@ public class IntroductionFragment extends android.support.v4.app.Fragment implem
                         dot1.setImageResource(R.drawable.empty);
                         dot2.setImageResource(R.drawable.empty);
                         dot3.setImageResource(R.drawable.rec_fill);
+                        ImageButton b = (ImageButton)getActivity().findViewById(R.id.getStartedButton);
+                        b.setVisibility(View.VISIBLE);
                         break;
 
                     default:

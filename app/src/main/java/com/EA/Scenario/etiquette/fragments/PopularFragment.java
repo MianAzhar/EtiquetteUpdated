@@ -39,6 +39,9 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
     {
         super.onActivityCreated(bundle);
 
+        DrawerLayout drawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
         ImageView menu = (ImageView)getActivity().findViewById(R.id.drawMenu);
         menu.setOnClickListener(this);
 
@@ -63,15 +66,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
                     trans.addToBackStack(null);
                     trans.replace(R.id.fragment_container, newFrag, "NoChoiceFragment").commit();
                 }
-                else if(i == 1)
-                {
-                    AnswerFragment newFrag = new AnswerFragment();
-                    android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                    //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    trans.addToBackStack(null);
-                    trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
-                }
-                else if(i == 2)
+                else
                 {
                     ChoiceFragment newFrag = new ChoiceFragment();
                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();

@@ -1,20 +1,22 @@
 package com.EA.Scenario.etiquette.fragments;
 
 
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
@@ -27,6 +29,8 @@ import java.util.Random;
 public class SignUpFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     private static final int SELECT_PICTURE = 1;
+    private static final int TAKE_PICTURE = 1234;
+    Dialog dialog;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -45,6 +49,18 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     {
         super.onActivityCreated(bundle);
 
+        dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_dialog);
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        ImageButton cam = (ImageButton)dialog.findViewById(R.id.fromCamera);
+        cam.setOnClickListener(this);
+
+        ImageButton  gal = (ImageButton)dialog.findViewById(R.id.fromGallery);
+        gal.setOnClickListener(this);
+
         final ImageButton signUpButton = (ImageButton)getActivity().findViewById(R.id.doneSignUpButton);
         signUpButton.setOnClickListener(this);
 
@@ -57,8 +73,15 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == getActivity().RESULT_OK) {
+        if (requestCode == TAKE_PICTURE && resultCode == getActivity().RESULT_OK) {
+            dialog.hide();
+            Uri selectedImageUri = data.getData();
+            ImageView img = (ImageView) getActivity().findViewById(R.id.profilePic);
+            img.setImageURI(selectedImageUri);
+        }
+        else if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
+                dialog.hide();
                 Uri selectedImageUri = data.getData();
                 ImageView image = (ImageView)getActivity().findViewById(R.id.profilePic);
                 image.setImageURI(selectedImageUri);
@@ -83,28 +106,38 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
         }
         else if(view.getId() == R.id.profilePic)
         {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+            dialog.show();
         }
         else if (view.getId() == R.id.generateUsername)
         {
             EditText et = (EditText)getActivity().findViewById(R.id.realName);
             String get = et.getText().toString();
+            get = get.replaceAll(" ", "");
             if(get !=null) {
                 Random r = new Random();
                 int Low = 100;
                 int High = 999;
                 int num = r.nextInt(High - Low) + Low;
                 get = get + num;
-                TextView tv = (TextView)getActivity().findViewById(R.id.userName);
+                EditText tv = (EditText)getActivity().findViewById(R.id.userName);
                 tv.setText(get);
             }
             else{
 
                 Toast.makeText(getActivity(), "Enter Your Name First", Toast.LENGTH_SHORT).show();
             }
+        }
+        else if(view.getId() == R.id.fromCamera)
+        {
+            Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(picIntent, TAKE_PICTURE);
+        }
+        else if(view.getId() == R.id.fromGallery)
+        {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
         }
     }
 

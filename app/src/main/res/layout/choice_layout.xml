@@ -24,13 +24,18 @@
         android:layout_marginRight="50dp"
         android:background="@drawable/divider_small" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:id="@+id/addChoice"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="right|center_vertical">
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/addChoice"
         android:layout_gravity="right|center_vertical"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/plus_icon"
-        android:padding="7dp"/>
+        android:background="@drawable/plus_icon"/>
+    </LinearLayout>
 
 </FrameLayout>

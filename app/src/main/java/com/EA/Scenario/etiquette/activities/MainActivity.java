@@ -1,5 +1,6 @@
 package com.EA.Scenario.etiquette.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -10,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -17,6 +20,7 @@ import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.adapters.EtiquetteListAdapter;
 import com.EA.Scenario.etiquette.fragments.AddScenarioFragment;
 import com.EA.Scenario.etiquette.fragments.IntroductionFragment;
+import com.EA.Scenario.etiquette.fragments.PopularFragment;
 import com.EA.Scenario.etiquette.fragments.ProfileFragment;
 import com.EA.Scenario.etiquette.fragments.SearchFragment;
 import com.EA.Scenario.etiquette.utils.Etiquette;
@@ -27,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static ArrayList<Etiquette> etiquetteList;
     public static EtiquetteListAdapter adapter;
+
+    public static ArrayList<String> arrayList;
+
     public DrawerLayout drawerLayout;
     NavigationView navigationView;
 
@@ -42,6 +49,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MainActivity.etiquetteList = new ArrayList<Etiquette>();
         adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
 
+        arrayList = new ArrayList<>();
+
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        arrayList.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+
         MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
         MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TOILET", 1));
         MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
@@ -54,6 +78,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         closeDrawer.setOnClickListener(this);
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        EditText search = (EditText)findViewById(R.id.searchBox);
+        search.setOnClickListener(this);
+
+        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View view, float v) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View view) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View view) {
+                View v = getCurrentFocus();
+                if (v != null) {
+                    InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(int i) {
+
+            }
+        });
 
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -77,11 +130,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // For rest of the options we just show a toast on click
 
                     case R.id.discover:
-                        SearchFragment newFrag = new SearchFragment();
+                        PopularFragment newFrag = new PopularFragment();
                         android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-                        //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        trans.addToBackStack(null);
-                        trans.replace(R.id.fragment_container, newFrag, "SearchFragment").commit();
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        trans.replace(R.id.fragment_container, newFrag, "PopularFragment").commit();
                         return true;
                     case R.id.addScenario:
                         AddScenarioFragment newFrag2 = new AddScenarioFragment();
@@ -103,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
+
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         IntroductionFragment newFrag = new IntroductionFragment();
         android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -137,12 +191,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (v.getId() == R.id.cancelMenu)
             drawerLayout.closeDrawers();
+        else if(v.getId() == R.id.searchBox)
+        {
+            drawerLayout.closeDrawers();
+            SearchFragment newFrag = new SearchFragment();
+            android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            trans.addToBackStack(null);
+            trans.replace(R.id.fragment_container, newFrag, "SearchFragment").commit();
+        }
     }
 
     public void onBackPressed() {
 
 
         if(drawerLayout.isDrawerOpen(navigationView)) {
+            View v = getCurrentFocus();
+            if (v != null) {
+                InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
             drawerLayout.closeDrawers();
             return;
         }

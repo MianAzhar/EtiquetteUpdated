@@ -12,7 +12,7 @@ import com.EA.Scenario.etiquette.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddLocationFragment extends Fragment {
+public class AddLocationFragment extends android.support.v4.app.Fragment {
 
 
     public AddLocationFragment() {

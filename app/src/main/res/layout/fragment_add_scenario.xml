@@ -96,7 +96,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/captionText"
-                android:lines="1"
                 android:hint="@string/add_caption"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
@@ -129,8 +128,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/editText8"
-
+                android:id="@+id/addLocationField"
                 android:lines="1"
                 android:hint="@string/add_location"
                 android:layout_marginLeft="8dp"
@@ -371,7 +369,8 @@
                 android:progressDrawable="@android:color/transparent"
                 android:id="@+id/customSeekBar"
                 android:layout_gravity="bottom"
-                android:thumb="@drawable/empty_icon"/>
+                android:thumb="@drawable/empty_icon"
+                android:background="@drawable/seek_bar"/>
 
             <LinearLayout
                 android:orientation="horizontal"
