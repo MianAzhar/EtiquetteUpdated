@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -25,6 +26,11 @@ import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -80,11 +86,29 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
         if (requestCode == TAKE_PICTURE && resultCode == getActivity().RESULT_OK) {
             dialog.hide();
             Uri selectedImageUri = data.getData();
-            Bitmap bmp = (Bitmap) data.getExtras().get("data");
+            //Bitmap bmp = (Bitmap) data.getExtras().get("data");
             ImageView img = (ImageView) getActivity().findViewById(R.id.profilePic);
-            img.setImageBitmap(bmp);
+            //img.setImageBitmap(bmp);
             //String path = getPath(selectedImageUri);
             //fun(path);
+
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+            File destination = new File(Environment.getExternalStorageDirectory(),
+                    System.currentTimeMillis() + ".jpg");
+            FileOutputStream fo;
+            try {
+                destination.createNewFile();
+                fo = new FileOutputStream(destination);
+                fo.write(bytes.toByteArray());
+                fo.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            img.setImageBitmap(thumbnail);
         }
         else if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
@@ -138,8 +162,11 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
         }
         else if(view.getId() == R.id.fromCamera)
         {
+            /*
             Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(picIntent, TAKE_PICTURE);
+            */
+            Toast.makeText(getActivity(), "Functionality not available", Toast.LENGTH_SHORT).show();
         }
         else if(view.getId() == R.id.fromGallery)
         {

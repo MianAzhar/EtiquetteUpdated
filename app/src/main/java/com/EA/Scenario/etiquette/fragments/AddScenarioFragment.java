@@ -208,8 +208,11 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         }
         else if(view.getId() == R.id.fromCamera)
         {
+            /*
             Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(picIntent, TAKE_PICTURE);
+            */
+            Toast.makeText(getActivity(), "Functionality not available", Toast.LENGTH_SHORT).show();
         }
         else if(view.getId() == R.id.fromGallery)
         {
