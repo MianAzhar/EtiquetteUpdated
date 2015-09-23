@@ -44,7 +44,7 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
         if(textList.get(position).getUri() != null)
         {
             ImageView img = (ImageView)row.findViewById(R.id.etiquetetImage);
-            img.setImageURI(textList.get(position).getUri());
+            img.setImageBitmap(textList.get(position).getUri());
         }
 
         ImageView rating = (ImageView)row.findViewById(R.id.ratingImage);

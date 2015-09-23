@@ -72,7 +72,8 @@
                     android:id="@+id/userName"
                     android:imeOptions="actionDone"
                     android:maxLength="30"
-                    android:background="#00000000"/>
+                    android:background="#00000000"
+                    android:textSize="13dp"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -5,6 +5,10 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -40,7 +44,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
     private String selectedImagePath;
     private ImageView img;
-    Uri selectedImageUri = null;
+    Bitmap selectedImageUri = null;
     ArrayList<View> choices;
     Dialog dialog;
 
@@ -110,20 +114,25 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TAKE_PICTURE && resultCode == getActivity().RESULT_OK) {
             dialog.hide();
-            selectedImageUri = data.getData();
+            Uri uri = data.getData();
+            selectedImageUri = (Bitmap) data.getExtras().get("data");
             ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
             chooseImage.setVisibility(View.GONE);
             img.setVisibility(View.VISIBLE);
-            img.setImageURI(selectedImageUri);
+            //String path = getPath(uri);
+            //fun(path);
+            img.setImageBitmap(selectedImageUri);
         }
         else if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 dialog.hide();
-                selectedImageUri = data.getData();
+                Uri uri = data.getData();
                 ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
                 chooseImage.setVisibility(View.GONE);
                 img.setVisibility(View.VISIBLE);
-                img.setImageURI(selectedImageUri);
+                String path = getPath(uri);
+                fun(path);
+                //img.setImageURI(selectedImageUri);
                 //chooseImage.setImageURI(selectedImageUri);
             }
         }
@@ -226,6 +235,57 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             EditText te = (EditText)row.findViewById(R.id.choiceText);
             te.requestFocus();
         }
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+    public void fun(String path)
+    {
+        selectedImageUri = decodeSampledBitmapFromResource(getResources(), path, 100, 100);
+        img.setImageBitmap(selectedImageUri);
+    }
+
+    public Bitmap decodeSampledBitmapFromResource(Resources res, String resId,
+                                                  int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(resId, options);
+    }
+
+    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
 }

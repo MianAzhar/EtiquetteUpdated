@@ -57,6 +57,9 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
 
         ImageButton changePic = (ImageButton)getActivity().findViewById(R.id.editPic);
         changePic.setOnClickListener(this);
+
+        ImageView save = (ImageView)getActivity().findViewById(R.id.saveProfile);
+        save.setOnClickListener(this);
     }
 
     @Override
@@ -95,6 +98,10 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+        }
+        else if(view.getId() == R.id.saveProfile)
+        {
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
         }
     }
 

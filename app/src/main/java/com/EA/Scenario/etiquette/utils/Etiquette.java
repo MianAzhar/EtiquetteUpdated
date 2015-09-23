@@ -1,6 +1,6 @@
 package com.EA.Scenario.etiquette.utils;
 
-import android.net.Uri;
+import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
@@ -22,15 +22,15 @@ public class Etiquette implements Serializable {
         uri = null;
     }
 
-    public Uri getUri() {
+    public Bitmap getUri() {
         return uri;
     }
 
-    public void setUri(Uri uri) {
+    public void setUri(Bitmap uri) {
         this.uri = uri;
     }
 
-    private Uri uri;
+    private Bitmap uri;
 
     public int getId() {
         return id;
