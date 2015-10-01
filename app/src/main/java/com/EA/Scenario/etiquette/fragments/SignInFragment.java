@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.utils.Constants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,7 +87,7 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
             SignUpFragment newFrag = new SignUpFragment();
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, "SignUpFragment").commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.SignUpFragmentTag).commit();
         }
     }
 

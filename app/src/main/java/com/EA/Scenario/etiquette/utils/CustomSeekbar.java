@@ -43,7 +43,7 @@ public class CustomSeekbar extends SeekBar {
                 getWidth()- getThumbOffset(),
                 (getHeight() / 2) + (seekbar_height/2));
 
-        paint.setColor(Color.GRAY);
+        paint.setColor(Color.LTGRAY);
 
         canvas.drawRect(rect, paint);
 
@@ -53,7 +53,7 @@ public class CustomSeekbar extends SeekBar {
 
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height/2),
-                    getWidth() / 2 + (getWidth() / 4) * (getProgress() - 2) - 10,
+                    getWidth() / 2 + (getWidth() / 4) * (getProgress() - 2) - 25,
                     getHeight() / 2 + (seekbar_height/2));
 
             paint.setColor(Color.BLACK);
@@ -63,7 +63,7 @@ public class CustomSeekbar extends SeekBar {
 
         if (this.getProgress() < 2) {
 
-            rect.set(getWidth() / 2 - ((getWidth() / 4) * (2 - getProgress())) + 10,
+            rect.set(getWidth() / 2 - ((getWidth() / 4) * (2 - getProgress())) + 25,
                     (getHeight() / 2) - (seekbar_height/2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));

@@ -1,6 +1,7 @@
 package com.EA.Scenario.etiquette.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -23,6 +24,8 @@ import com.EA.Scenario.etiquette.fragments.IntroductionFragment;
 import com.EA.Scenario.etiquette.fragments.PopularFragment;
 import com.EA.Scenario.etiquette.fragments.ProfileFragment;
 import com.EA.Scenario.etiquette.fragments.SearchFragment;
+import com.EA.Scenario.etiquette.fragments.SignUpFragment;
+import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 
 import java.util.ArrayList;
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         android.support.v4.app.FragmentTransaction trans2 = getSupportFragmentManager().beginTransaction();
                         //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         trans2.addToBackStack(null);
-                        trans2.replace(R.id.fragment_container, newFrag2, "Add ScenarioFragment").commit();
+                        trans2.replace(R.id.fragment_container, newFrag2, Constants.AddScenarioFragmentTag).commit();
                         return true;
                     case R.id.profile:
                         ProfileFragment newFrag1 = new ProfileFragment();
@@ -199,6 +202,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.addToBackStack(null);
             trans.replace(R.id.fragment_container, newFrag, "SearchFragment").commit();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == Constants.TAKE_PICTURE_SIGN_UP || requestCode == Constants.SELECT_PICTURE_SIGN_UP)
+        {
+            SignUpFragment frag = (SignUpFragment)getSupportFragmentManager().findFragmentByTag(Constants.SignUpFragmentTag);
+            if(frag != null && frag.isVisible())
+            {
+                frag.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        else if(requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO || requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO)
+        {
+            AddScenarioFragment frag = (AddScenarioFragment)getSupportFragmentManager().findFragmentByTag(Constants.AddScenarioFragmentTag);
+            if(frag != null && frag.isVisible())
+            {
+                frag.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 

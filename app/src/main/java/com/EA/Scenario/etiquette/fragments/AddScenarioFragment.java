@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -20,18 +21,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.CustomSeekbar;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -39,14 +46,17 @@ import java.util.ArrayList;
  */
 public class AddScenarioFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    private static final int SELECT_PICTURE = 1;
-    private static final int TAKE_PICTURE = 1234;
-
     private String selectedImagePath;
     private ImageView img;
     Bitmap selectedImageUri = null;
     ArrayList<View> choices;
     Dialog dialog;
+
+    ImageView dot1;
+    ImageView dot2;
+    ImageView dot3;
+    ImageView dot4;
+    ImageView dot5;
 
     public AddScenarioFragment() {
         // Required empty public constructor
@@ -65,17 +75,102 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     {
         super.onActivityCreated(bundle);
 
+        dot1 = (ImageView)getActivity().findViewById(R.id.dot1);
+        dot2 = (ImageView)getActivity().findViewById(R.id.dot2);
+        dot3 = (ImageView)getActivity().findViewById(R.id.dot3);
+        dot4 = (ImageView)getActivity().findViewById(R.id.dot4);
+        dot5 = (ImageView)getActivity().findViewById(R.id.dot5);
+
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.custom_dialog);
         Window window = dialog.getWindow();
         window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        ImageButton cam = (ImageButton)dialog.findViewById(R.id.fromCamera);
+        Button cam = (Button)dialog.findViewById(R.id.fromCamera);
         cam.setOnClickListener(this);
 
-        ImageButton  gal = (ImageButton)dialog.findViewById(R.id.fromGallery);
+        Button  gal = (Button)dialog.findViewById(R.id.fromGallery);
         gal.setOnClickListener(this);
+
+        CustomSeekbar bar = (CustomSeekbar)getActivity().findViewById(R.id.customSeekBar);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
+                switch (progress) {
+                    case 0:
+                        dot1.setVisibility(View.GONE);
+                        dot2.setImageResource(R.drawable.fill_icon);
+                        dot2.setVisibility(View.VISIBLE);
+                        dot3.setVisibility(View.VISIBLE);
+                        dot3.setImageResource(R.drawable.highllightred);
+                        dot4.setImageResource(R.drawable.highllightred);
+                        dot4.setVisibility(View.VISIBLE);
+                        dot5.setImageResource(R.drawable.highllightred);
+                        dot5.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        dot1.setVisibility(View.VISIBLE);
+                        dot1.setImageResource(R.drawable.highllightred);
+                        dot2.setVisibility(View.GONE);
+                        dot3.setVisibility(View.VISIBLE);
+                        dot3.setImageResource(R.drawable.highllightred);
+                        dot4.setImageResource(R.drawable.highllightred);
+                        dot4.setVisibility(View.VISIBLE);
+                        dot5.setImageResource(R.drawable.highllightred);
+                        dot5.setVisibility(View.VISIBLE);
+                        break;
+                    case 2:
+                        dot1.setVisibility(View.VISIBLE);
+                        dot1.setImageResource(R.drawable.highllightred);
+                        dot2.setVisibility(View.VISIBLE);
+                        dot2.setImageResource(R.drawable.highllightred);
+                        dot3.setVisibility(View.GONE);
+                        dot4.setImageResource(R.drawable.highllightred);
+                        dot4.setVisibility(View.VISIBLE);
+                        dot5.setImageResource(R.drawable.highllightred);
+                        dot5.setVisibility(View.VISIBLE);
+                        break;
+                    case 3:
+                        dot1.setVisibility(View.VISIBLE);
+                        dot1.setImageResource(R.drawable.highllightred);
+                        dot2.setVisibility(View.VISIBLE);
+                        dot2.setImageResource(R.drawable.highllightred);
+                        dot3.setVisibility(View.VISIBLE);
+                        dot3.setImageResource(R.drawable.highllightred);
+                        dot4.setVisibility(View.GONE);
+                        dot5.setImageResource(R.drawable.highllightred);
+                        dot5.setVisibility(View.VISIBLE);
+                        break;
+                    case 4:
+                        dot1.setVisibility(View.VISIBLE);
+                        dot1.setImageResource(R.drawable.highllightred);
+                        dot2.setVisibility(View.VISIBLE);
+                        dot2.setImageResource(R.drawable.highllightred);
+                        dot3.setVisibility(View.VISIBLE);
+                        dot3.setImageResource(R.drawable.highllightred);
+                        dot4.setImageResource(R.drawable.fill_icon);
+                        dot4.setVisibility(View.VISIBLE);
+                        dot5.setVisibility(View.GONE);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+        });
 
         choices = new ArrayList<View>();
 
@@ -112,7 +207,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TAKE_PICTURE && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO && resultCode == getActivity().RESULT_OK) {
             dialog.hide();
             Uri uri = data.getData();
             selectedImageUri = (Bitmap) data.getExtras().get("data");
@@ -124,14 +219,37 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             img.setImageBitmap(selectedImageUri);
         }
         else if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
+            if (requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO) {
                 dialog.hide();
+                Uri uri = data.getData();
+                ParcelFileDescriptor parcelFileDescriptor;
+                try {
+                    parcelFileDescriptor = getActivity().getContentResolver().openFileDescriptor(uri, "r");
+                    FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                    Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                    parcelFileDescriptor.close();
+                    selectedImageUri = Bitmap.createScaledBitmap(image, 500, 300, true);
+                    //addDream.setImageBitmap(resized);
+                    ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
+                    chooseImage.setVisibility(View.GONE);
+                    img.setVisibility(View.VISIBLE);
+                    img.setImageBitmap(selectedImageUri);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
+                /*
                 Uri uri = data.getData();
                 ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
                 chooseImage.setVisibility(View.GONE);
                 img.setVisibility(View.VISIBLE);
                 String path = getPath(uri);
                 fun(path);
+                */
                 //img.setImageURI(selectedImageUri);
                 //chooseImage.setImageURI(selectedImageUri);
             }
@@ -208,18 +326,18 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         }
         else if(view.getId() == R.id.fromCamera)
         {
-            /*
+
             Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(picIntent, TAKE_PICTURE);
-            */
-            Toast.makeText(getActivity(), "Functionality not available", Toast.LENGTH_SHORT).show();
+            getActivity().startActivityForResult(picIntent, Constants.TAKE_PICTURE_ADD_SCENARIO);
+
+            //Toast.makeText(getActivity(), "Functionality not available", Toast.LENGTH_SHORT).show();
         }
         else if(view.getId() == R.id.fromGallery)
         {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+            getActivity().startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.SELECT_PICTURE_ADD_SCENARIO);
         }
     }
 

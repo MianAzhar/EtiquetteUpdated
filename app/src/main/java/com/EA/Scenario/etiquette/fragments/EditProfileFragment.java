@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -49,10 +50,10 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
         Window window = dialog.getWindow();
         window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        ImageButton cam = (ImageButton)dialog.findViewById(R.id.fromCamera);
+        Button cam = (Button)dialog.findViewById(R.id.fromCamera);
         //cam.setOnClickListener(this);
 
-        ImageButton  gal = (ImageButton)dialog.findViewById(R.id.fromGallery);
+        Button  gal = (Button)dialog.findViewById(R.id.fromGallery);
         //gal.setOnClickListener(this);
 
         ImageButton changePic = (ImageButton)getActivity().findViewById(R.id.editPic);
