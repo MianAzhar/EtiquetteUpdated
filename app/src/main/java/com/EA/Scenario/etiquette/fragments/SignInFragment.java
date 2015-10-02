@@ -2,6 +2,7 @@ package com.EA.Scenario.etiquette.fragments;
 
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,12 +12,27 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +42,8 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
     String[] list;
     String[] codes;
     TextView codeText;
+    EditText phoneNumberField;
+    ProgressDialog progressDialog;
 
     public SignInFragment() {
         // Required empty public constructor
@@ -46,6 +64,8 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
 
         final ImageButton signInButton = (ImageButton)getActivity().findViewById(R.id.signInButton);
         signInButton.setOnClickListener(this);
+
+        phoneNumberField = (EditText)getActivity().findViewById(R.id.phoneNumber);
 
         codes = getResources().getStringArray(R.array.codes);
         list = getResources().getStringArray(R.array.country_name);
@@ -84,11 +104,86 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
+            /*
             SignUpFragment newFrag = new SignUpFragment();
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.replace(R.id.fragment_container, newFrag, Constants.SignUpFragmentTag).commit();
+            */
+            verifyNumber();
         }
+    }
+
+    public void verifyNumber()
+    {
+        String phone = phoneNumberField.getText().toString();
+        if(phone == null)
+        {
+            Toast.makeText(getActivity(), "Enter phone number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (phone.length() < 1)
+        {
+            Toast.makeText(getActivity(), "Enter phone number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //final ProgressDialog progressDialog = new ProgressDialog(getActivity(), null, "Siging In", true);
+        final String phoneNumber = codeText.getText().toString() + phone;
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/signin-signup",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String msg = jsonResponse.getString("message");
+
+                            if(msg.equals("Signed in successfully. Phone number is verified"))
+                            {
+                                PopularFragment newFrag = new PopularFragment();
+                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                            }
+                            else if(msg.equals("Signed in successfully. After adding phone number"))
+                            {
+                                SignUpFragment newFrag = new SignUpFragment();
+                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                trans.replace(R.id.fragment_container, newFrag, Constants.SignUpFragmentTag).commit();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                        Toast.makeText(getActivity(), "Check internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<>();
+                // the POST parameters:
+                params.put("language", "english");
+                params.put("phoneNumber", phoneNumber);
+                return params;
+            }
+        };
+
+        progressDialog = ProgressDialog.show(getActivity(), null, "Signing In", true, false);
+        MainActivity.networkQueue.add(postRequest);
     }
 
 }

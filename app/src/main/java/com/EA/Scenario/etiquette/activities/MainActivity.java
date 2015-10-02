@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.adapters.EtiquetteListAdapter;
 import com.EA.Scenario.etiquette.fragments.AddScenarioFragment;
+import com.EA.Scenario.etiquette.fragments.EditProfileFragment;
 import com.EA.Scenario.etiquette.fragments.IntroductionFragment;
 import com.EA.Scenario.etiquette.fragments.PopularFragment;
 import com.EA.Scenario.etiquette.fragments.ProfileFragment;
@@ -27,6 +28,8 @@ import com.EA.Scenario.etiquette.fragments.SearchFragment;
 import com.EA.Scenario.etiquette.fragments.SignUpFragment;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 
@@ -36,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static EtiquetteListAdapter adapter;
 
     public static ArrayList<String> arrayList;
+
+    public static RequestQueue networkQueue;
 
     public DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         //getSupportActionBar().hide();
+
+        networkQueue = Volley.newRequestQueue(this);
 
         MainActivity.etiquetteList = new ArrayList<Etiquette>();
         adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
@@ -218,6 +225,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if(requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO || requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO)
         {
             AddScenarioFragment frag = (AddScenarioFragment)getSupportFragmentManager().findFragmentByTag(Constants.AddScenarioFragmentTag);
+            if(frag != null && frag.isVisible())
+            {
+                frag.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        else if(requestCode == Constants.TAKE_PICTURE_EDIT_PROFILE || requestCode == Constants.SELECT_PICTURE_EDIT_PROFILE)
+        {
+            EditProfileFragment frag = (EditProfileFragment)getSupportFragmentManager().findFragmentByTag(Constants.EditProfileFragmentTag);
             if(frag != null && frag.isVisible())
             {
                 frag.onActivityResult(requestCode, resultCode, data);

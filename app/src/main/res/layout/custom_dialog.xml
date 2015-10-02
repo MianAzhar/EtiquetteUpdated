@@ -7,14 +7,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/takephoto"
-        >
+        android:background="@drawable/takephoto1">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/fromCamera"
             android:layout_gravity="left|bottom"
             android:background="@drawable/dialog_button"
+            android:fontFamily="sans-serif-thin"
+            android:typeface="monospace"
             android:text="@string/camera_text" />
 
         <Button
@@ -24,7 +25,18 @@
             android:layout_gravity="right|bottom"
             android:background="@drawable/dialog_button"
             android:text="@string/gallery_text"
-            android:layout_marginLeft="2dp"/>
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginLeft="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/take_photo"
+            android:fontFamily="sans-serif-thin"
+            android:id="@+id/textView11"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="15dp"
+            android:textSize="17dp" />
     </FrameLayout>
 
 </LinearLayout>

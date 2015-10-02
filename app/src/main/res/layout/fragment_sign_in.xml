@@ -66,7 +66,8 @@
                 android:minLines="1"
                 android:phoneNumber="true"
                 android:singleLine="true"
-                android:maxLength="15" />
+                android:maxLength="15"
+                android:id="@+id/phoneNumber"/>
         </LinearLayout>
     </FrameLayout>
 

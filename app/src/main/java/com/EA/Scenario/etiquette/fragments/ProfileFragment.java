@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.utils.Constants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +53,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.addToBackStack(null);
-            trans.replace(R.id.fragment_container, newFrag, "EditProfileFragment").commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.EditProfileFragmentTag).commit();
         }
         else if(view.getId() == R.id.drawMenu)
         {

@@ -38,16 +38,40 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/profilebg"
             android:layout_margin="8dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/profilebg"
+                android:id="@+id/coverPic"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#9FFF"
+                android:scaleType="fitXY"/>
+            <!--
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/userpic"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="30dp" />
+                        -->
+
+
+            <com.EA.Scenario.etiquette.utils.RoundedImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:src="@drawable/userpic"
-                android:paddingTop="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginBottom="30dp"
+                android:id="@+id/profilePic"
+                android:scaleType="fitXY"/>
 
             <TextView
                 android:layout_width="wrap_content"

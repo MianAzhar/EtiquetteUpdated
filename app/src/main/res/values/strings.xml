@@ -91,6 +91,7 @@
     <string name="tap_to_enter_name">Tap to Enter your Name</string>
     <string name="camera_text">Camera</string>
     <string name="gallery_text">Gallery</string>
+    <string name="take_photo">Take Photo From</string>
 
     <array name ="Spinner_entries"> <item>Select your category</item>
         <item>TRAVEL</item>
