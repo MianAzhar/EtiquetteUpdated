@@ -45,7 +45,8 @@
         android:layout_weight="9.2"
         android:layout_marginLeft="10dp"
         android:scrollbarStyle="outsideInset"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:id="@+id/scrollView">
 
         <LinearLayout
             android:layout_width="match_parent"

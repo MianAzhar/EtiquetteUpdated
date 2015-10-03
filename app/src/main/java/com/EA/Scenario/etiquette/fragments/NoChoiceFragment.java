@@ -6,13 +6,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
@@ -21,7 +25,9 @@ import com.EA.Scenario.etiquette.activities.MainActivity;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NoChoiceFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+public class NoChoiceFragment extends android.support.v4.app.Fragment implements GestureDetector.OnGestureListener, View.OnClickListener {
+
+    private GestureDetector gDetector;
 
     public NoChoiceFragment() {
         // Required empty public constructor
@@ -31,13 +37,31 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_no_choice, container, false);
+        View view =  inflater.inflate(R.layout.fragment_no_choice, container, false);
+
+        view.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    return gDetector.onTouchEvent(event);
+                }
+                return true;
+
+
+            }
+        });
+
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
+
+        gDetector = new GestureDetector(this);
 
         ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
         submitComment.setOnClickListener(this);
@@ -47,6 +71,10 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
 
         ImageView moreComments = (ImageView)getActivity().findViewById(R.id.loadComments);
         moreComments.setOnClickListener(this);
+
+
+        ScrollView mScrollView = (ScrollView)getActivity().findViewById(R.id.scrollView);
+        mScrollView.requestDisallowInterceptTouchEvent(true);
     }
 
     @Override
@@ -87,4 +115,35 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
         }
     }
 
+    @Override
+    public boolean onDown(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    @Override
+    public boolean onFling(MotionEvent start, MotionEvent finish, float xVelocity, float yVelocity) {
+        if (start.getRawY() > finish.getRawY()) {
+            if(start.getRawY() - finish.getRawY() > 200)
+                Toast.makeText(getActivity().getApplicationContext(), "Swipe Up", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+    @Override
+    public void onLongPress(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    @Override
+    public void onShowPress(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public boolean onSingleTapUp(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

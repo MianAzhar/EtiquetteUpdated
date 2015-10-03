@@ -3,12 +3,14 @@ package com.EA.Scenario.etiquette.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,7 +29,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,6 +45,8 @@ import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -43,6 +55,11 @@ import java.util.Random;
 public class SignUpFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     Dialog dialog;
+    String phoneNumber;
+    EditText realName;
+    EditText userName;
+    ProgressDialog progressDialog;
+    Bitmap userImage = null;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -60,6 +77,13 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     public void onActivityCreated(Bundle bundle)
     {
         super.onActivityCreated(bundle);
+
+        Bundle args = getArguments();
+        phoneNumber = args.getString("phoneNumber");
+
+        realName = (EditText)getActivity().findViewById(R.id.realName);
+        userName = (EditText)getActivity().findViewById(R.id.userName);
+
 
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -111,6 +135,7 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                 e.printStackTrace();
             }
             img.setImageBitmap(thumbnail);
+            userImage = thumbnail;
         }
         else if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == Constants.SELECT_PICTURE_SIGN_UP) {
@@ -126,6 +151,7 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                     //addDream.setImageBitmap(resized);
                     ImageView mImageView = (ImageView)getActivity().findViewById(R.id.profilePic);
                     mImageView.setImageBitmap(resized);
+                    userImage = resized;
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
@@ -150,15 +176,26 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     {
         if(view.getId() == R.id.doneSignUpButton)
         {
+            String fName = realName.getText().toString();
+            String uName = userName.getText().toString();
+
+            if(fName.length() < 1)
+            {
+                Toast.makeText(getActivity(), "Enter Full Name", Toast.LENGTH_SHORT);
+                return;
+            }
+            if(uName.length() < 1)
+            {
+                Toast.makeText(getActivity(), "User Name cannot empty", Toast.LENGTH_SHORT);
+                return;
+            }
             View v = getActivity().getCurrentFocus();
             if (v != null) {
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
-            PopularFragment newFrag = new PopularFragment();
-            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, "PopularFragment").commit();
+
+            checkUserName();
         }
         else if(view.getId() == R.id.profilePic)
         {
@@ -199,6 +236,76 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
             intent.setAction(Intent.ACTION_GET_CONTENT);
             getActivity().startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.SELECT_PICTURE_SIGN_UP);
         }
+    }
+
+    void checkUserName()
+    {
+        final String fName = realName.getText().toString();
+        final String uName = userName.getText().toString();
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/signin-signup-username",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String msg = jsonResponse.getString("message");
+
+                            if(msg.equals("User name is accepted") || msg.equals("User name is verified"))
+                            {
+                                PopularFragment newFrag = new PopularFragment();
+                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                            }
+                            else if(msg.equals("User name already exists"))
+                            {
+                                userName.setTextColor(Color.RED);
+                                Toast.makeText(getActivity(), "UserName not available", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                        Toast.makeText(getActivity(), "Check internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<>();
+                // the POST parameters:
+                params.put("language", "english");
+                params.put("phoneNumber", phoneNumber);
+                params.put("name", fName);
+                params.put("UserName", uName);
+
+                if(userImage != null)
+                {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    userImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    String str = byteArray.toString();
+                    params.put("Picture", str);
+                }
+                return params;
+            }
+        };
+
+        progressDialog = ProgressDialog.show(getActivity(), null, "Checking UserName", true, false);
+        MainActivity.networkQueue.add(postRequest);
     }
 
     public String getPath(Uri uri) {

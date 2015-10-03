@@ -1,6 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.EA.Scenario.etiquette.fragments.ChoiceFragment"
     android:orientation="vertical"
     android:weightSum="10"
@@ -38,13 +40,18 @@
             android:src="@drawable/flag_icon"/>
 
     </FrameLayout>
-
-    <ScrollView
+    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
+        android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9.2"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
+        app:direction="bottom">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scrollbarStyle="outsideInset">
 
         <LinearLayout
@@ -219,5 +226,6 @@
 
         </LinearLayout>
     </ScrollView>
+    </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
 
 </LinearLayout>

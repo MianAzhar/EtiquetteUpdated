@@ -64,6 +64,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                     //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     trans.addToBackStack(null);
+                    trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
                     trans.replace(R.id.fragment_container, newFrag, "NoChoiceFragment").commit();
                 }
                 else

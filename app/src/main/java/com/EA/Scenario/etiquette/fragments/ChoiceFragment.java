@@ -4,14 +4,18 @@ package com.EA.Scenario.etiquette.fragments;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +52,23 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
         c3.setOnClickListener(this);
         c4.setOnClickListener(this);
 
+        SwipyRefreshLayout m = (SwipyRefreshLayout)getActivity().findViewById(R.id.scrollView1);
+
+        m.setRefreshing(false);
+
+
+        m.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh(SwipyRefreshLayoutDirection direction) {
+                AnswerFragment newFrag = new AnswerFragment();
+                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                trans.addToBackStack(null);
+                trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
+            }
+        });
+
     }
 
     @Override
@@ -65,6 +86,7 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.addToBackStack(null);
+            trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
             trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
         }
     }

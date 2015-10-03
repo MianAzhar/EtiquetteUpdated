@@ -44,6 +44,7 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
     TextView codeText;
     EditText phoneNumberField;
     ProgressDialog progressDialog;
+    //String phoneNumber;
 
     public SignInFragment() {
         // Required empty public constructor
@@ -143,14 +144,30 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
 
                             if(msg.equals("Signed in successfully. Phone number is verified"))
                             {
-                                PopularFragment newFrag = new PopularFragment();
-                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                                trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                String userName = jsonResponse.getString("data");
+                                if(userName.length() < 1)
+                                {
+                                    SignUpFragment newFrag = new SignUpFragment();
+                                    Bundle args = new Bundle();
+                                    args.putString("phoneNumber", phoneNumber);
+                                    newFrag.setArguments(args);
+                                    android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                    getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                    trans.replace(R.id.fragment_container, newFrag, Constants.SignUpFragmentTag).commit();
+                                }
+                                else {
+                                    PopularFragment newFrag = new PopularFragment();
+                                    android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                    getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                    trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                }
                             }
                             else if(msg.equals("Signed in successfully. After adding phone number"))
                             {
                                 SignUpFragment newFrag = new SignUpFragment();
+                                Bundle args = new Bundle();
+                                args.putString("phoneNumber", phoneNumber);
+                                newFrag.setArguments(args);
                                 android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                 getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 trans.replace(R.id.fragment_container, newFrag, Constants.SignUpFragmentTag).commit();
