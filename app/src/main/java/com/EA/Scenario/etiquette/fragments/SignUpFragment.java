@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,7 +111,7 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.TAKE_PICTURE_SIGN_UP && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == Constants.TAKE_PICTURE_SIGN_UP && resultCode == FragmentActivity.RESULT_OK) {
             dialog.hide();
             Uri selectedImageUri = data.getData();
             //Bitmap bmp = (Bitmap) data.getExtras().get("data");
@@ -129,15 +131,13 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                 fo = new FileOutputStream(destination);
                 fo.write(bytes.toByteArray());
                 fo.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             img.setImageBitmap(thumbnail);
             userImage = thumbnail;
         }
-        else if (resultCode == getActivity().RESULT_OK) {
+        else if (resultCode == FragmentActivity.RESULT_OK) {
             if (requestCode == Constants.SELECT_PICTURE_SIGN_UP) {
                 dialog.hide();
                 Uri selectedImageUri = data.getData();
@@ -152,9 +152,6 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                     ImageView mImageView = (ImageView)getActivity().findViewById(R.id.profilePic);
                     mImageView.setImageBitmap(resized);
                     userImage = resized;
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -255,6 +252,11 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
 
                             if(msg.equals("User name is accepted") || msg.equals("User name is verified"))
                             {
+                                SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("userName", uName);
+                                editor.commit();
+
                                 PopularFragment newFrag = new PopularFragment();
                                 android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                 getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -264,7 +266,6 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                             {
                                 userName.setTextColor(Color.RED);
                                 Toast.makeText(getActivity(), "UserName not available", Toast.LENGTH_SHORT).show();
-                                return;
                             }
 
                         } catch (JSONException e) {

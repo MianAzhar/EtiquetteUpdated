@@ -3,7 +3,9 @@ package com.EA.Scenario.etiquette.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
@@ -73,11 +77,18 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
 
         ImageView save = (ImageView)getActivity().findViewById(R.id.saveProfile);
         save.setOnClickListener(this);
+
+        SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+
+        String user = pref.getString("userName", "");
+
+        TextView userName = (TextView)getActivity().findViewById(R.id.userNameText);
+        userName.setText(user);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.TAKE_PICTURE_EDIT_PROFILE && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == Constants.TAKE_PICTURE_EDIT_PROFILE && resultCode == FragmentActivity.RESULT_OK) {
             dialog.hide();
 
             ImageView img = (ImageView) getActivity().findViewById(R.id.profilePic);
@@ -93,16 +104,14 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
                 fo = new FileOutputStream(destination);
                 fo.write(bytes.toByteArray());
                 fo.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            }  catch (IOException e) {
                 e.printStackTrace();
             }
             img.setImageBitmap(thumbnail);
             ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
             cover.setImageBitmap(thumbnail);
         }
-        else if (resultCode == getActivity().RESULT_OK) {
+        else if (resultCode == FragmentActivity.RESULT_OK) {
             if (requestCode == Constants.SELECT_PICTURE_EDIT_PROFILE) {
                 dialog.hide();
                 Uri selectedImageUri = data.getData();
@@ -118,9 +127,6 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
 
                     ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
                     cover.setImageBitmap(resized);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

@@ -2,6 +2,8 @@ package com.EA.Scenario.etiquette.fragments;
 
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.utils.Constants;
@@ -42,6 +45,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
 
         final ImageButton editButton = (ImageButton)getActivity().findViewById(R.id.imageEdit);
         editButton.setOnClickListener(this);
+
+        SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+
+        String user = pref.getString("userName", "");
+
+        TextView userName = (TextView)getActivity().findViewById(R.id.userNameText);
+        userName.setText(user);
     }
 
     @Override

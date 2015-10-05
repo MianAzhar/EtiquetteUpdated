@@ -12,7 +12,15 @@ public class Constants {
     public static final int SELECT_PICTURE_EDIT_PROFILE = 1127;
 
     public static final String SignUpFragmentTag = "SignUpFragment";
+    public static final String SignInFragmentTag = "SignInFragment";
     public static final String AddScenarioFragmentTag = "AddScenarioFragment";
     public static final String PopularFragmentTag = "PopularFragment";
     public static final String EditProfileFragmentTag = "EditProfileFragment";
+    public static final String IntroductionFragmentTag = "IntroductionFragment";
+    public static final String ProfileFragmentTag = "ProfileFragment";
+    public static final String SearchFragmentTag = "SearchFragment";
+    public static final String LatestFragmentTag = "LatestFragment";
+    public static final String CategoriesFragmentTag = "CategoriesFragment";
+
+    public static final String EtiquettePreferences = "EtiquettePreferences";
 }

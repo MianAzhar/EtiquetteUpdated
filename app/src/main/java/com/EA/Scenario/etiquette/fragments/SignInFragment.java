@@ -4,6 +4,7 @@ package com.EA.Scenario.etiquette.fragments;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -118,12 +119,7 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
     public void verifyNumber()
     {
         String phone = phoneNumberField.getText().toString();
-        if(phone == null)
-        {
-            Toast.makeText(getActivity(), "Enter phone number", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        else if (phone.length() < 1)
+        if (phone.length() < 1)
         {
             Toast.makeText(getActivity(), "Enter phone number", Toast.LENGTH_SHORT).show();
             return;
@@ -156,6 +152,12 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
                                     trans.replace(R.id.fragment_container, newFrag, Constants.SignUpFragmentTag).commit();
                                 }
                                 else {
+                                    SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = pref.edit();
+
+                                    editor.putString("userName", userName);
+                                    editor.commit();
+
                                     PopularFragment newFrag = new PopularFragment();
                                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                     getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

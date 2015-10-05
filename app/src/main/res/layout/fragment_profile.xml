@@ -128,7 +128,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText2"
+                android:id="@+id/userNameText"
                 android:layout_gravity="center_vertical"
                 android:text="@string/user_name"
                 android:layout_marginLeft="10dp"

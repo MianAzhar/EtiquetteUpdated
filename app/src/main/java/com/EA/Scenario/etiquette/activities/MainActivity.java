@@ -2,6 +2,7 @@ package com.EA.Scenario.etiquette.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
@@ -25,6 +27,7 @@ import com.EA.Scenario.etiquette.fragments.IntroductionFragment;
 import com.EA.Scenario.etiquette.fragments.PopularFragment;
 import com.EA.Scenario.etiquette.fragments.ProfileFragment;
 import com.EA.Scenario.etiquette.fragments.SearchFragment;
+import com.EA.Scenario.etiquette.fragments.SignInFragment;
 import com.EA.Scenario.etiquette.fragments.SignUpFragment;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         networkQueue = Volley.newRequestQueue(this);
 
-        MainActivity.etiquetteList = new ArrayList<Etiquette>();
+        MainActivity.etiquetteList = new ArrayList<>();
         adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
 
         arrayList = new ArrayList<>();
@@ -91,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         EditText search = (EditText)findViewById(R.id.searchBox);
         search.setOnClickListener(this);
+
+        TextView signout = (TextView)findViewById(R.id.sign_out_button);
+        signout.setOnClickListener(this);
 
         drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -143,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         PopularFragment newFrag = new PopularFragment();
                         android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        trans.replace(R.id.fragment_container, newFrag, "PopularFragment").commit();
+                        trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
                         return true;
                     case R.id.addScenario:
                         AddScenarioFragment newFrag2 = new AddScenarioFragment();
@@ -157,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         android.support.v4.app.FragmentTransaction trans1 = getSupportFragmentManager().beginTransaction();
                         //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         trans1.addToBackStack(null);
-                        trans1.replace(R.id.fragment_container, newFrag1, "ProfileFragment").commit();
+                        trans1.replace(R.id.fragment_container, newFrag1, Constants.ProfileFragmentTag).commit();
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -168,10 +174,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-        IntroductionFragment newFrag = new IntroductionFragment();
-        android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        trans.replace(R.id.fragment_container, newFrag, "IntroductionFragment").commit();
+        SharedPreferences pref = getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+
+        String user = pref.getString("userName", "");
+
+        if(user.length() < 1) {
+            IntroductionFragment newFrag = new IntroductionFragment();
+            android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            trans.replace(R.id.fragment_container, newFrag, Constants.IntroductionFragmentTag).commit();
+        }
+        else {
+            PopularFragment newFrag = new PopularFragment();
+            android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+        }
     }
 
     @Override
@@ -208,7 +226,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.addToBackStack(null);
-            trans.replace(R.id.fragment_container, newFrag, "SearchFragment").commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.SearchFragmentTag).commit();
+        }
+        else if(v.getId() == R.id.sign_out_button){
+            SharedPreferences pref = getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+
+            editor.clear();
+            editor.commit();
+
+            if(drawerLayout.isDrawerOpen(navigationView)) {
+                drawerLayout.closeDrawers();
+            }
+
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            SignInFragment newFrag = new SignInFragment();
+
+            android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            trans.replace(R.id.fragment_container, newFrag, Constants.SignInFragmentTag);
+            trans.commit();
         }
     }
 
@@ -253,9 +290,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        Fragment popularFragment = (Fragment) getSupportFragmentManager().findFragmentByTag("PopularFragment");
-        Fragment latestFragment = getSupportFragmentManager().findFragmentByTag("LatestFragment");
-        Fragment categoriesFragment = getSupportFragmentManager().findFragmentByTag("CategoriesFragment");
+        Fragment popularFragment = getSupportFragmentManager().findFragmentByTag(Constants.PopularFragmentTag);
+        Fragment latestFragment = getSupportFragmentManager().findFragmentByTag(Constants.LatestFragmentTag);
+        Fragment categoriesFragment = getSupportFragmentManager().findFragmentByTag(Constants.CategoriesFragmentTag);
 
         if ((popularFragment != null && popularFragment.isVisible())
                 || (latestFragment != null && latestFragment.isVisible())
@@ -278,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }, 2000);
         } else {
             super.onBackPressed();
-            return;
         }
 
     }
