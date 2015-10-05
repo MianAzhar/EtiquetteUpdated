@@ -58,6 +58,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     ImageView dot4;
     ImageView dot5;
 
+    EditText captionTextField;
+    Spinner categoryField;
+    CustomSeekbar meterBar;
+
     public AddScenarioFragment() {
         // Required empty public constructor
     }
@@ -74,6 +78,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     public void onActivityCreated(Bundle bundle)
     {
         super.onActivityCreated(bundle);
+
+        captionTextField = (EditText)getActivity().findViewById(R.id.captionText);
+        categoryField = (Spinner)getActivity().findViewById(R.id.category);
+        meterBar = (CustomSeekbar)getActivity().findViewById(R.id.customSeekBar);
 
         dot1 = (ImageView)getActivity().findViewById(R.id.dot1);
         dot2 = (ImageView)getActivity().findViewById(R.id.dot2);
@@ -275,35 +283,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                 inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
 
-            Etiquette etiquette = new Etiquette();
-            etiquette.setTitle(((EditText)getActivity().findViewById(R.id.captionText)).getText().toString());
-            etiquette.setType(((Spinner) getActivity().findViewById(R.id.category)).getSelectedItem().toString());
-            etiquette.setMeter(((CustomSeekbar) getActivity().findViewById(R.id.customSeekBar)).getProgress());
-            etiquette.setUri(selectedImageUri);
-
-            if(choices.size() == 4) {
-                EditText text = (EditText) choices.get(0).findViewById(R.id.choiceText);
-                etiquette.setOpt1_text(text.getText().toString());
-
-                text = (EditText) choices.get(1).findViewById(R.id.choiceText);
-                etiquette.setOpt2_text(text.getText().toString());
-
-                text = (EditText) choices.get(2).findViewById(R.id.choiceText);
-                etiquette.setOpt3_text(text.getText().toString());
-
-                text = (EditText) choices.get(3).findViewById(R.id.choiceText);
-                etiquette.setOpt4_text(text.getText().toString());
-            }
-
-            MainActivity.etiquetteList.add(etiquette);
-            MainActivity.adapter.notifyDataSetChanged();
-
-            Toast.makeText(getActivity(), "Scenario Added", Toast.LENGTH_SHORT).show();
-
-            PopularFragment newFrag = new PopularFragment();
-            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, "PopularFragment").commit();
+            addScenario();
         }
         else if(view.getId() == R.id.addChoice)
         {
@@ -339,6 +319,55 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             intent.setAction(Intent.ACTION_GET_CONTENT);
             getActivity().startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.SELECT_PICTURE_ADD_SCENARIO);
         }
+    }
+
+    void addScenario()
+    {
+        String caption = captionTextField.getText().toString();
+        String category = categoryField.getSelectedItem().toString();
+
+        if(selectedImageUri == null){
+            Toast.makeText(getActivity(), "Please select image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(caption.length() < 1){
+            Toast.makeText(getActivity(), "Please add caption", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (category.equals(getResources().getString(R.string.select_catagory))){
+            Toast.makeText(getActivity(), "Please select a category", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Etiquette etiquette = new Etiquette();
+        etiquette.setTitle(((EditText)getActivity().findViewById(R.id.captionText)).getText().toString());
+        etiquette.setType(((Spinner) getActivity().findViewById(R.id.category)).getSelectedItem().toString());
+        etiquette.setMeter(((CustomSeekbar) getActivity().findViewById(R.id.customSeekBar)).getProgress());
+        etiquette.setUri(selectedImageUri);
+
+        if(choices.size() == 4) {
+            EditText text = (EditText) choices.get(0).findViewById(R.id.choiceText);
+            etiquette.setScenario_Option_1(text.getText().toString());
+
+            text = (EditText) choices.get(1).findViewById(R.id.choiceText);
+            etiquette.setScenario_Option_2(text.getText().toString());
+
+            text = (EditText) choices.get(2).findViewById(R.id.choiceText);
+            etiquette.setScenario_Option_3(text.getText().toString());
+
+            text = (EditText) choices.get(3).findViewById(R.id.choiceText);
+            etiquette.setScenario_Option_4(text.getText().toString());
+        }
+
+        MainActivity.etiquetteList.add(etiquette);
+        MainActivity.adapter.notifyDataSetChanged();
+
+        Toast.makeText(getActivity(), "Scenario Added", Toast.LENGTH_SHORT).show();
+
+        PopularFragment newFrag = new PopularFragment();
+        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        trans.replace(R.id.fragment_container, newFrag, "PopularFragment").commit();
     }
 
     void addChoice()
