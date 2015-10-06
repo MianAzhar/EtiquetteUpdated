@@ -257,6 +257,8 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                                 editor.putString("userName", uName);
                                 editor.commit();
 
+                                MainActivity.userName = uName;
+
                                 PopularFragment newFrag = new PopularFragment();
                                 android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                 getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

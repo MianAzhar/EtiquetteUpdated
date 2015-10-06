@@ -3,12 +3,15 @@ package com.EA.Scenario.etiquette.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -16,6 +19,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +39,26 @@ import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.CustomSeekbar;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +80,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     EditText captionTextField;
     Spinner categoryField;
     CustomSeekbar meterBar;
+
+    ProgressDialog progressDialog;
 
     public AddScenarioFragment() {
         // Required empty public constructor
@@ -323,8 +344,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
     void addScenario()
     {
-        String caption = captionTextField.getText().toString();
-        String category = categoryField.getSelectedItem().toString();
+        final String caption = captionTextField.getText().toString();
+        final String category = categoryField.getSelectedItem().toString();
 
         if(selectedImageUri == null){
             Toast.makeText(getActivity(), "Please select image", Toast.LENGTH_SHORT).show();
@@ -359,15 +380,99 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             etiquette.setScenario_Option_4(text.getText().toString());
         }
 
+        /*
+        Web API Call
+         */
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/add-scenario",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String msg = jsonResponse.getString("status");
+
+                            if(msg.equals("success"))
+                            {
+                                Toast.makeText(getActivity(), "Scenario Added", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(getActivity(), "Status fail", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                        Toast.makeText(getActivity(), "Check internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<>();
+
+                // the POST parameters:
+                params.put("User_Name", MainActivity.userName);
+                params.put("Scenario_Description", caption);
+                params.put("Scenario_Category", category);
+                params.put("Scenario_Current_Location", "lat, lon");
+                params.put("Scenario_Entry_Time", Long.toString(System.currentTimeMillis()));
+                params.put("Scenario_Level", Integer.toString(meterBar.getProgress() - 2));
+
+                String format = "yyyy-MM-dd HH:mm:ss";
+                final SimpleDateFormat sdf = new SimpleDateFormat(format);
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String utcTime = sdf.format(new Date());
+
+                params.put("Scenario_Id",utcTime);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                selectedImageUri.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                String str = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                params.put("Scenario_Picture", str);
+
+                int index = 1;
+
+                for(int i = 0; i < choices.size(); i++)
+                {
+                    String temp = ((EditText)choices.get(i).findViewById(R.id.choiceText)).getText().toString();
+                    if(temp.length() > 0)
+                    {
+                        params.put("Scenario_Option_"+index, temp);
+                        index++;
+                    }
+                }
+
+                return params;
+            }
+        };
+
+
+        /*
+        Web API Call end
+         */
+
         MainActivity.etiquetteList.add(etiquette);
         MainActivity.adapter.notifyDataSetChanged();
 
-        Toast.makeText(getActivity(), "Scenario Added", Toast.LENGTH_SHORT).show();
+        RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        postRequest.setRetryPolicy(policy);
 
-        PopularFragment newFrag = new PopularFragment();
-        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        trans.replace(R.id.fragment_container, newFrag, "PopularFragment").commit();
+        progressDialog = ProgressDialog.show(getActivity(), null, "Adding Scenario", true, false);
+        MainActivity.networkQueue.add(postRequest);
     }
 
     void addChoice()

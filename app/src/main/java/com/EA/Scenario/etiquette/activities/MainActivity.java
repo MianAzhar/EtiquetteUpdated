@@ -3,6 +3,7 @@ package com.EA.Scenario.etiquette.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -29,6 +30,7 @@ import com.EA.Scenario.etiquette.fragments.ProfileFragment;
 import com.EA.Scenario.etiquette.fragments.SearchFragment;
 import com.EA.Scenario.etiquette.fragments.SignInFragment;
 import com.EA.Scenario.etiquette.fragments.SignUpFragment;
+import com.EA.Scenario.etiquette.services.GPSTracker;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.android.volley.RequestQueue;
@@ -41,12 +43,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static ArrayList<Etiquette> etiquetteList;
     public static EtiquetteListAdapter adapter;
 
+    public static GPSTracker gps;
+
+    public static String userName = "";
+
+    public static double latitude;
+    public static double longitude;
+
+    public static Location location;
+
     public static ArrayList<String> arrayList;
 
     public static RequestQueue networkQueue;
 
     public DrawerLayout drawerLayout;
     NavigationView navigationView;
+
+    Handler h1;
+    Runnable r1;
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -58,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //getSupportActionBar().hide();
 
         networkQueue = Volley.newRequestQueue(this);
+
+        gps = new GPSTracker(this);
 
         MainActivity.etiquetteList = new ArrayList<>();
         adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
@@ -174,6 +190,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
+        h1 = new Handler();
+
+        r1 = new Runnable() {
+
+            @Override
+            public void run() {
+                location = gps.getLocation();
+                h1.postDelayed(r1, 120000);
+
+            }
+        };
+
         SharedPreferences pref = getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
 
         String user = pref.getString("userName", "");
@@ -185,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             trans.replace(R.id.fragment_container, newFrag, Constants.IntroductionFragmentTag).commit();
         }
         else {
+            userName = user;
             PopularFragment newFrag = new PopularFragment();
             android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
