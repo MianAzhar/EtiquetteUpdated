@@ -75,6 +75,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/choice_layout">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@drawable/choice_background"
                 android:weightSum="10"
                 android:id="@+id/choice_1_layout"
@@ -214,6 +219,7 @@
                     android:layout_marginLeft="5dp"
                     android:textSize="11sp"/>
 
+            </LinearLayout>
             </LinearLayout>
 
             <ImageButton
