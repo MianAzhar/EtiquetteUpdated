@@ -100,11 +100,12 @@ public class Etiquette implements Serializable {
     private String title;
     private String type;
     private int meter;
+    /*
     private String Scenario_Option_1;
     private String Scenario_Option_2;
     private String Scenario_Option_3;
     private String Scenario_Option_4;
-
+*/
     public String getScenario_Option_9() {
         return Scenario_Option_9;
     }
@@ -145,12 +146,13 @@ public class Etiquette implements Serializable {
         Scenario_Option_5 = scenario_Option_5;
     }
 
+    /*
     private String Scenario_Option_5;
     private String Scenario_Option_6;
     private String Scenario_Option_7;
     private String Scenario_Option_8;
     private String Scenario_Option_9;
-
+*/
     public int getOpt1_count() {
         return opt1_count;
     }
@@ -188,5 +190,38 @@ public class Etiquette implements Serializable {
 
     private int opt3_count = 0;
     private int opt4_count = 0;
+
+    //new data
+
+    public String Etiquette_Id;
+    public String Category_Name;
+    public String User_Picture;
+    public String User_Full_Name;
+    public String User_Name;
+    public String Scenario_Entry_Time;
+    public String Scenario_Number_Of_Views;
+    public String Scenario_Location;
+    public String Scenario_Current_Location;
+    public String Scenario_Description;
+    public String Scenario_Picture;
+    public int Scenario_Level;
+    public String Scenario_Option_1;
+    public String Scenario_Option_2;
+    public String Scenario_Option_3;
+    public String Scenario_Option_4;
+    public String Scenario_Option_5;
+    public String Scenario_Option_6;
+    public String Scenario_Option_7;
+    public String Scenario_Option_8;
+    public String Scenario_Option_9;
+    public String Scenario_Value_1;
+    public String Scenario_Value_2;
+    public String Scenario_Value_3;
+    public String Scenario_Value_4;
+    public String Scenario_Value_5;
+    public String Scenario_Value_6;
+    public String Scenario_Value_7;
+    public String Scenario_Value_8;
+    public String Scenario_Value_9;
 
 }

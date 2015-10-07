@@ -17,14 +17,15 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/user"
-                android:id="@+id/drawMenu"
+                android:id="@+id/userImage"
                 android:scaleType="fitXY"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/john_smith"
-                android:layout_marginLeft="5dp"/>
+                android:layout_marginLeft="5dp"
+                android:id="@+id/userName"/>
         </LinearLayout>
 
         <TextView

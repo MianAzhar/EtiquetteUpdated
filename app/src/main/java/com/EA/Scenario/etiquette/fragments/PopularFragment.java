@@ -2,6 +2,8 @@ package com.EA.Scenario.etiquette.fragments;
 
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +20,10 @@ import android.widget.ListView;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,6 +63,19 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
 
         list.setAdapter(MainActivity.adapter);
 
+        /*
+        SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+
+        String user = pref.getString("userName", "");
+
+        Map<String, String> params = new HashMap<>();
+        // the POST parameters:
+        params.put("language", "english");
+        params.put("User_Name", user);
+
+        EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-user", list, MainActivity.adapter, MainActivity.etiquetteList, params);
+        */
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

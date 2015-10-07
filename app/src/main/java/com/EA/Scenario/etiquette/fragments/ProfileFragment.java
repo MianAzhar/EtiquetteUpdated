@@ -77,7 +77,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
 
         user.User_Name = pref.getString("userName", "");
-        user.Mobile_Number = pref.getString("phoneNumber", "");
+        user.Phone = pref.getString("phoneNumber", "");
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/get-profile",
                 new Response.Listener<String>() {
@@ -116,7 +116,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 Map<String, String> params = new HashMap<>();
                 // the POST parameters:
                 params.put("language", "english");
-                params.put("Phone_Number", user.Mobile_Number);
+                params.put("Phone_Number", user.Phone);
                 params.put("User_Name", user.User_Name);
 
                 return params;
@@ -133,7 +133,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         userName.setText(user.User_Name);
 
         TextView phoneNumberText = (TextView)getActivity().findViewById(R.id.phoenNumberText);
-        phoneNumberText.setText(user.Mobile_Number);
+        phoneNumberText.setText(user.Phone);
     }
 
     void setData()

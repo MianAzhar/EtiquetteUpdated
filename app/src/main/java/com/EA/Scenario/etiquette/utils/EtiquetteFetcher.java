@@ -26,6 +26,7 @@ import java.util.Map;
 
 /**
  * Created by mian_ on 10/7/2015.
+ * Fetch Etiquette from Server
  */
 public class EtiquetteFetcher {
 
@@ -36,7 +37,7 @@ public class EtiquetteFetcher {
 
     ProgressDialog progressDialog;
 
-    void getEtiquette(final Context context, String url, ListView lv, EtiquetteListAdapter ad, ArrayList<Etiquette> list, Map<String, String> params)
+    public void getEtiquette(final Context context, String url, ListView lv, EtiquetteListAdapter ad, ArrayList<Etiquette> list, Map<String, String> params)
     {
         listView = lv;
         etiquetteListAdapter = ad;
