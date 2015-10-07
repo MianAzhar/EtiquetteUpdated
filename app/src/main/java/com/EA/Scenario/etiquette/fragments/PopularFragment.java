@@ -17,6 +17,7 @@ import android.widget.ListView;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.Constants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,7 +68,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
                     trans.addToBackStack(null);
                     //trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
                     //trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                    trans.replace(R.id.fragment_container, newFrag, "NoChoiceFragment").commit();
+                    trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
                 }
                 else
                 {
@@ -75,7 +76,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                     //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     trans.addToBackStack(null);
-                    trans.replace(R.id.fragment_container, newFrag, "ChoiceFragment").commit();
+                    trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
                 }
             }
         });
@@ -90,7 +91,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
 
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, "LatestFragment").commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.LatestFragmentTag).commit();
         }
         else if(view.getId() == R.id.categoryButton_popular)
         {
@@ -98,7 +99,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
 
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, "CategoriesFragment").commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.CategoriesFragmentTag).commit();
         }
         else if(view.getId() == R.id.drawMenu)
         {

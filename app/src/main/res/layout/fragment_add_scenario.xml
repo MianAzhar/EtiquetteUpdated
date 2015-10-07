@@ -126,7 +126,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp">
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/addLocationField"
@@ -137,9 +137,8 @@
                 android:background="#00000000"
                 android:textSize="15dp"
                 android:layout_marginTop="8dp"
-                android:imeOptions="actionNext"
                 android:maxLines="1"
-                android:inputType="text"/>
+                android:clickable="true"/>
 
         </FrameLayout>
 

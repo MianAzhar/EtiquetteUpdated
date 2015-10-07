@@ -2,18 +2,24 @@ package com.EA.Scenario.etiquette.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.services.GPSTracker;
+import com.EA.Scenario.etiquette.utils.Constants;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -29,15 +36,26 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddLocationFragment extends android.support.v4.app.Fragment {
+public class AddLocationFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
 
     public static double x1;
     public static double x2;
     public static double y1;
     public static double y2;
-    public static String url;
     ProgressDialog progress;
+
+    public static String selectedCity = null;
+
+    public static String url;
+    public static String googleUrl;
+
+    double longitude;
+    double latitude;
+
+    EditText cityNameField;
+
+    ArrayList<String> list;
 
     public AddLocationFragment() {
         // Required empty public constructor
@@ -55,65 +73,172 @@ public class AddLocationFragment extends android.support.v4.app.Fragment {
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
 
+        cityNameField = (EditText)getActivity().findViewById(R.id.cityName);
 
-        // Check if GPS enabled
-        if (MainActivity.gps.canGetLocation()) {
-            double R = 6371;  // earth radius in km
-            double radius = 50; // km
-
-
-            double lat = MainActivity.location.getLatitude();
-            double lon = MainActivity.location.getLongitude();
+        ImageButton search = (ImageButton)getActivity().findViewById(R.id.searchCities);
+        search.setOnClickListener(this);
 
 
 
-            x1 = lon - Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
 
-            x2 = lon + Math.toDegrees(radius / R / Math.cos(Math.toRadians(lat)));
+        ListView lv = (ListView)getActivity().findViewById(R.id.listView2);
 
-            y1 = lat + Math.toDegrees(radius / R);
-
-            y2 = lat - Math.toDegrees(radius / R);
-
-            url = "http://api.geonames.org/citiesJSON?north=" + y1 + "&south=" + y2 + "&east=" + x2 + "&west=" + x1 + "&lang=de&username=aliilyas";
-            // Toast.makeText(getApplicationContext(),  "lat: " +lat+ "long" +lon, Toast.LENGTH_SHORT).show();
-            //Toast.makeText(getApplicationContext(), "west " + x1 + "\n east: " + x2 + "\nnorth: " + y1 + "\nsouth: " + y2, Toast.LENGTH_SHORT).show();
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            func(response);
-
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "No Internet", Toast.LENGTH_SHORT).show();
-                    // Error handling
-                    System.out.println("Something went wrong!");
-                    error.printStackTrace();
-
-                }
-            });
-
-            progress = ProgressDialog.show(getActivity(), "Processing",
-                    "Receiving Data", true);
-            RequestQueue queue = Volley.newRequestQueue(getActivity());
-            queue.add(stringRequest);
-            // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + lat + "\nLong: " + lon, Toast.LENGTH_LONG).show();
-        } else {
-            // Can't get location.
-            // GPS or network is not enabled.
-            // Ask user to enable GPS/network in settings.
-            MainActivity.gps.showSettingsAlert();
-        }
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                returnResult(list.get(i));
+            }
+        });
 
 
     }
 
-    void func(String obj)
+    void returnResult(String name)
     {
-        ArrayList<String> list = new ArrayList<>();
+        selectedCity = name;
+        AddLocationFragment newFrag1 = new AddLocationFragment();
+        android.support.v4.app.FragmentTransaction trans1 = getActivity().getSupportFragmentManager().beginTransaction();
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        if(view.getId() == R.id.searchCities)
+        {
+            String name = cityNameField.getText().toString();
+            if(name.length() < 1)
+            {
+                Toast.makeText(getActivity(), "Enter name of city", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            View v = getActivity().getCurrentFocus();
+            if (v != null) {
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+
+            getCities(name);
+        }
+    }
+
+    public void getCities(String city)
+    {
+        city = city.replaceAll(" ", "%20");
+        googleUrl = "http://maps.google.com/maps/api/geocode/json?address=" + city +"&sensor=false";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, googleUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progress.dismiss();
+                        progress = null;
+                        try
+                        {
+                            JSONObject  jsonObject = new JSONObject(response.toString());
+
+                            if(getLatLong(jsonObject))
+                            {
+                                getNearByCities();
+                            }
+                            else {
+                                Toast.makeText(getActivity(), "City not found", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        catch(Exception e)
+                        {
+
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progress.dismiss();
+                progress = null;
+                Toast.makeText(getActivity(), "No Internet", Toast.LENGTH_SHORT).show();
+                // Error handling
+                System.out.println("Something went wrong!");
+                error.printStackTrace();
+
+            }
+        });
+
+        progress = ProgressDialog.show(getActivity(), null,
+                "Receiving Data", true);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(stringRequest);
+    }
+
+    private boolean getLatLong(JSONObject jsonObject)
+    {
+        try {
+
+            longitude = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+
+            latitude = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+                    .getJSONObject("geometry").getJSONObject("location")
+                    .getDouble("lat");
+            //Toast.makeText(getActivity(),  "lat: " +latitude+ "long" +longitude, Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+
+            longitude=0;
+            latitude = 0;
+
+            return false;
+
+        }
+
+        return true;
+    }
+
+    void getNearByCities()
+    {
+        double R = 6371;  // earth radius in km
+        double radius = 50; // km
+
+        x1 = longitude - Math.toDegrees(radius / R / Math.cos(Math.toRadians(latitude)));
+
+        x2 = longitude + Math.toDegrees(radius / R / Math.cos(Math.toRadians(latitude)));
+
+        y1 = latitude + Math.toDegrees(radius / R);
+
+        y2 = latitude - Math.toDegrees(radius / R);
+
+        url = "http://api.geonames.org/citiesJSON?north=" + y1 + "&south=" + y2 + "&east=" + x2 + "&west=" + x1 + "&lang=de&username=aliilyas";
+        // Toast.makeText(getApplicationContext(),  "lat: " +lat+ "long" +lon, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "west " + x1 + "\n east: " + x2 + "\nnorth: " + y1 + "\nsouth: " + y2, Toast.LENGTH_SHORT).show();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progress.dismiss();
+                        progress = null;
+                        parseCities(response);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progress.dismiss();
+                progress = null;
+
+                Toast.makeText(getActivity(), "No Internet", Toast.LENGTH_SHORT).show();
+                // Error handling
+                System.out.println("Something went wrong!");
+                error.printStackTrace();
+            }
+        });
+
+        progress = ProgressDialog.show(getActivity(), null,
+                "Getting cities", true);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(stringRequest);
+    }
+
+    void parseCities(String obj)
+    {
+        list = new ArrayList<>();
         try {
             JSONObject json = new JSONObject(obj);
 
@@ -132,9 +257,8 @@ public class AddLocationFragment extends android.support.v4.app.Fragment {
 
         ArrayAdapter<String> ad = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
 
-        ListView lv = (ListView)getActivity().findViewById(R.id.listView);
+        ListView lv = (ListView)getActivity().findViewById(R.id.listView2);
         lv.setAdapter(ad);
-        progress.dismiss();
 
         return;
     }

@@ -10,6 +10,7 @@ public class Constants {
     public static final int SELECT_PICTURE_ADD_SCENARIO = 1125;
     public static final int TAKE_PICTURE_EDIT_PROFILE = 1126;
     public static final int SELECT_PICTURE_EDIT_PROFILE = 1127;
+    public static final int GET_LOCATION = 1128;
 
     public static final String SignUpFragmentTag = "SignUpFragment";
     public static final String SignInFragmentTag = "SignInFragment";
@@ -21,6 +22,8 @@ public class Constants {
     public static final String SearchFragmentTag = "SearchFragment";
     public static final String LatestFragmentTag = "LatestFragment";
     public static final String CategoriesFragmentTag = "CategoriesFragment";
+    public static final String ChoiceFragmentTag = "ChoiceFragment";
+    public static final String NoChoiceFragmentTag = "NoChoiceFragment";
 
     public static final String EtiquettePreferences = "EtiquettePreferences";
 }

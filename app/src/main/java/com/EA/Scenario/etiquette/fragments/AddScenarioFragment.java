@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
@@ -77,9 +78,13 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     ImageView dot4;
     ImageView dot5;
 
+    TextView locationField;
+
     EditText captionTextField;
     Spinner categoryField;
     CustomSeekbar meterBar;
+
+    String cityName = null;
 
     ProgressDialog progressDialog;
 
@@ -203,8 +208,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
         choices = new ArrayList<View>();
 
-        EditText location = (EditText)getActivity().findViewById(R.id.addLocationField);
-        location.setOnClickListener(this);
+        locationField = (TextView)getActivity().findViewById(R.id.addLocationField);
+        locationField.setOnClickListener(this);
 
         ImageView menu = (ImageView)getActivity().findViewById(R.id.drawMenu);
         menu.setOnClickListener(this);
@@ -232,11 +237,26 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         l.addView(row);
 
         choices.add(row);
+
+        // Check if GPS enabled
+        if (MainActivity.gps.canGetLocation()) {
+            MainActivity.location = MainActivity.gps.getLocation();
+
+        } else {
+            // Can't get location.
+            // GPS or network is not enabled.
+            // Ask user to enable GPS/network in settings.
+            MainActivity.gps.showSettingsAlert();
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO && resultCode == getActivity().RESULT_OK) {
+        if(requestCode == Constants.GET_LOCATION && requestCode == getActivity().RESULT_OK)
+        {
+            cityName = data.getStringExtra("city");
+        }
+        else if (requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO && resultCode == getActivity().RESULT_OK) {
             dialog.hide();
             Uri uri = data.getData();
             selectedImageUri = (Bitmap) data.getExtras().get("data");
@@ -318,12 +338,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         }
         else if(view.getId() == R.id.addLocationField)
         {
-            /*
             AddLocationFragment newFrag1 = new AddLocationFragment();
             android.support.v4.app.FragmentTransaction trans1 = getActivity().getSupportFragmentManager().beginTransaction();
             trans1.addToBackStack(null);
             trans1.replace(R.id.fragment_container, newFrag1, "LocationFragment").commit();
-            */
         }
         else if(view.getId() == R.id.fromCamera)
         {
@@ -339,6 +357,18 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             getActivity().startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.SELECT_PICTURE_ADD_SCENARIO);
+        }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        if(AddLocationFragment.selectedCity != null)
+        {
+            locationField.setText(AddLocationFragment.selectedCity);
+            AddLocationFragment.selectedCity = null;
         }
     }
 
@@ -426,9 +456,15 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                 params.put("User_Name", MainActivity.userName);
                 params.put("Scenario_Description", caption);
                 params.put("Scenario_Category", category);
-                params.put("Scenario_Current_Location", "lat, lon");
+                params.put("Scenario_Current_Location", "" + MainActivity.gps.getLatitude() + ", " + MainActivity.gps.getLongitude());
                 params.put("Scenario_Entry_Time", Long.toString(System.currentTimeMillis()));
                 params.put("Scenario_Level", Integer.toString(meterBar.getProgress() - 2));
+
+                String city = locationField.getText().toString();
+                if(city.length() > 0)
+                    params.put("Scenario_Location", city);
+
+
 
                 String format = "yyyy-MM-dd HH:mm:ss";
                 final SimpleDateFormat sdf = new SimpleDateFormat(format);

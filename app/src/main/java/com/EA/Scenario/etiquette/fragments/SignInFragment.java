@@ -156,6 +156,7 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
                                     SharedPreferences.Editor editor = pref.edit();
 
                                     editor.putString("userName", userName);
+                                    editor.putString("phoneNumber", phoneNumber);
                                     editor.commit();
 
                                     MainActivity.userName = userName;

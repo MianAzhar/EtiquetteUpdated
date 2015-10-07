@@ -3,6 +3,7 @@ package com.EA.Scenario.etiquette.fragments;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,18 +15,32 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.User;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +48,8 @@ import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,6 +59,12 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
     private static final int SELECT_PICTURE = 1;
     private static final int TAKE_PICTURE = 1234;
     Dialog dialog;
+
+    Bitmap userImage = null;
+
+    ProgressDialog progressDialog;
+
+    User user;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -59,6 +82,10 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
     public void onActivityCreated(Bundle bundle)
     {
         super.onActivityCreated(bundle);
+
+        Bundle args = getArguments();
+
+        user = (User)args.getSerializable("data");
 
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -78,12 +105,23 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
         ImageView save = (ImageView)getActivity().findViewById(R.id.saveProfile);
         save.setOnClickListener(this);
 
-        SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
-
-        String user = pref.getString("userName", "");
-
         TextView userName = (TextView)getActivity().findViewById(R.id.userNameText);
-        userName.setText(user);
+        userName.setText(user.User_Name);
+
+        ((EditText)getActivity().findViewById(R.id.fullNameField)).setText(user.Name);
+        ((TextView)getActivity().findViewById(R.id.displayName)).setText(user.Name);
+
+        if(user.Email != null)
+        {
+            ((EditText)getActivity().findViewById(R.id.emailField)).setText(user.Email);
+        }
+
+        ((EditText)getActivity().findViewById(R.id.phoneNumberField)).setText(user.Mobile_Number);
+
+        if(user.Picture != null)
+        {
+
+        }
     }
 
     @Override
@@ -110,6 +148,7 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
             img.setImageBitmap(thumbnail);
             ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
             cover.setImageBitmap(thumbnail);
+            userImage = thumbnail;
         }
         else if (resultCode == FragmentActivity.RESULT_OK) {
             if (requestCode == Constants.SELECT_PICTURE_EDIT_PROFILE) {
@@ -127,6 +166,7 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
 
                     ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
                     cover.setImageBitmap(resized);
+                    userImage = resized;
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -159,8 +199,80 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
         }
         else if(view.getId() == R.id.saveProfile)
         {
-            getActivity().getSupportFragmentManager().popBackStackImmediate();
+            updateProfile();
+            //getActivity().getSupportFragmentManager().popBackStackImmediate();
         }
+    }
+
+    void updateProfile()
+    {
+        final String name = ((EditText)getActivity().findViewById(R.id.fullNameField)).getText().toString();
+        final String email = ((EditText)getActivity().findViewById(R.id.emailField)).getText().toString();
+
+        if(name.length() < 1)
+        {
+            Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+        }
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/edit-profile",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String msg = jsonResponse.getString("status");
+
+                            if(msg.equals("success")) {
+                                Toast.makeText(getActivity(), "Profile Updated", Toast.LENGTH_SHORT).show();
+                                getActivity().getSupportFragmentManager().popBackStackImmediate();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                        Toast.makeText(getActivity(), "Check internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<>();
+                // the POST parameters:
+                params.put("language", "english");
+                params.put("Phone_Number", user.Mobile_Number);
+                params.put("User_Name", user.User_Name);
+                params.put("Name", name);
+                params.put("Email", email);
+
+                if(userImage != null)
+                {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    userImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    String str = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                    params.put("Picture", str);
+                }
+
+                return params;
+            }
+        };
+
+        RetryPolicy policy = new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        postRequest.setRetryPolicy(policy);
+
+        progressDialog = ProgressDialog.show(getActivity(), null, "Updating Profile", true, false);
+        MainActivity.networkQueue.add(postRequest);
     }
 
 }

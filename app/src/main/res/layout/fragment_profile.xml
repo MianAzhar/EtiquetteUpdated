@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sarah_josh"
-            android:id="@+id/textView2"
+            android:id="@+id/displayName"
             android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="30dp"
 
@@ -169,7 +169,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText4"
+                android:id="@+id/fullNameField"
                 android:layout_marginLeft="10dp"
                 android:text="@string/name"
                 android:layout_gravity="center_vertical"
@@ -206,7 +206,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText5"
+                android:id="@+id/emailField"
                 android:layout_marginLeft="10dp"
                 android:text="@string/email_text"
                 android:layout_gravity="center_vertical"
@@ -241,7 +241,8 @@
                 android:layout_marginLeft="10dp"
                 android:text="@string/mobile_number"
                 android:layout_gravity="center_vertical"
-                android:textSize="13sp"/>
+                android:textSize="13sp"
+                android:id="@+id/phoenNumberText"/>
         </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"

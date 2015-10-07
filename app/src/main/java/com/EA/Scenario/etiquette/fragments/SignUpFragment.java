@@ -19,6 +19,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +34,10 @@ import android.widget.Toast;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
@@ -255,6 +258,7 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                                 SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("userName", uName);
+                                editor.putString("phoneNumber", phoneNumber);
                                 editor.commit();
 
                                 MainActivity.userName = uName;
@@ -300,12 +304,15 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     userImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
-                    String str = byteArray.toString();
+                    String str = Base64.encodeToString(byteArray, Base64.DEFAULT);
                     params.put("Picture", str);
                 }
                 return params;
             }
         };
+
+        RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        postRequest.setRetryPolicy(policy);
 
         progressDialog = ProgressDialog.show(getActivity(), null, "Checking UserName", true, false);
         MainActivity.networkQueue.add(postRequest);
