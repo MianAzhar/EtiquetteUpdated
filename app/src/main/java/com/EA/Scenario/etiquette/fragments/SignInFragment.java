@@ -140,7 +140,7 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
 
                             if(msg.equals("Signed in successfully. Phone number is verified"))
                             {
-                                String userName = jsonResponse.getString("data");
+                                String userName = jsonResponse.getJSONObject("data").getString("UserName");
                                 if(userName.length() < 1)
                                 {
                                     SignUpFragment newFrag = new SignUpFragment();

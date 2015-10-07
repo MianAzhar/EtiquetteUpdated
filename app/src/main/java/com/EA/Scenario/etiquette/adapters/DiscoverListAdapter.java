@@ -27,9 +27,12 @@ public class DiscoverListAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
 
-        LayoutInflater inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View row = inflator.inflate(R.layout.discover_list_item, parent ,false);
+        if(row == null) {
+            LayoutInflater inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            row = inflator.inflate(R.layout.discover_list_item, parent, false);
+        }
 
         TextView textView = (TextView)row.findViewById(R.id.cityName);
         textView.setText(textList.get(position));

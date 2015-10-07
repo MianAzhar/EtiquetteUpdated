@@ -29,9 +29,12 @@ public class CommentListAdapter extends ArrayAdapter<String>
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
 
-        LayoutInflater inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View row = inflator.inflate(R.layout.comment_list_item, parent ,false);
+        if(row == null) {
+            LayoutInflater inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            row = inflator.inflate(R.layout.comment_list_item, parent, false);
+        }
 
         TextView body = (TextView)row.findViewById(R.id.commentBody);
 

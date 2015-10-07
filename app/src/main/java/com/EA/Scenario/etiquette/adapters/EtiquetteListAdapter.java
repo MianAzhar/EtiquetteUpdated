@@ -31,9 +31,11 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        LayoutInflater inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View row = inflator.inflate(R.layout.etiquette_list_item, parent ,false);
+        View row = convertView;
+        if(row == null) {
+            LayoutInflater inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            row = inflator.inflate(R.layout.etiquette_list_item, parent, false);
+        }
 
         TextView title = (TextView)row.findViewById(R.id.titleText);
         title.setText(textList.get(position).getTitle());
