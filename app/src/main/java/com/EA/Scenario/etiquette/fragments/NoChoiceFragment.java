@@ -3,6 +3,7 @@ package com.EA.Scenario.etiquette.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +31,8 @@ import com.EA.Scenario.etiquette.activities.MainActivity;
 public class NoChoiceFragment extends android.support.v4.app.Fragment implements GestureDetector.OnGestureListener, View.OnClickListener {
 
     private GestureDetector gDetector;
+
+    Etiquette etiquette;
 
     public NoChoiceFragment() {
         // Required empty public constructor
@@ -63,6 +68,9 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
 
         gDetector = new GestureDetector(this);
 
+        Bundle args = getArguments();
+        etiquette = (Etiquette)args.getSerializable("data");
+
         ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
         submitComment.setOnClickListener(this);
 
@@ -72,9 +80,61 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
         ImageView moreComments = (ImageView)getActivity().findViewById(R.id.loadComments);
         moreComments.setOnClickListener(this);
 
+        ImageButton share = (ImageButton)getActivity().findViewById(R.id.shareButton);
+        share.setOnClickListener(this);
 
         ScrollView mScrollView = (ScrollView)getActivity().findViewById(R.id.scrollView);
         mScrollView.requestDisallowInterceptTouchEvent(true);
+
+        TextView title = (TextView)getActivity().findViewById(R.id.titleText);
+        title.setText(etiquette.Scenario_Description);
+
+        TextView type = (TextView)getActivity().findViewById(R.id.typeText);
+        type.setText(etiquette.Category_Name);
+
+        TextView userName = (TextView)getActivity().findViewById(R.id.userName);
+        userName.setText(etiquette.User_Full_Name);
+
+        TextView views = (TextView)getActivity().findViewById(R.id.views);
+        views.setText(etiquette.Scenario_Number_Of_Views);
+
+        if(etiquette.Scenario_Picture != null)
+        {
+            ImageView img = (ImageView)getActivity().findViewById(R.id.etiquetetImage);
+            ///img.setImageBitmap(StringToBitMap(textList.get(position).Scenario_Picture));
+            Picasso.with(getActivity()).load(etiquette.Scenario_Picture).into(img);
+        }
+
+        if(etiquette.User_Picture != null)
+        {
+            ImageView img = (ImageView)getActivity().findViewById(R.id.userImage);
+            //img.setImageBitmap(StringToBitMap(textList.get(position).User_Picture));
+            Picasso.with(getActivity()).load(etiquette.User_Picture).into(img);
+        }
+
+        ImageView rating = (ImageView)getActivity().findViewById(R.id.ratingImage);
+
+        switch (etiquette.Scenario_Level)
+        {
+            case 0:
+                rating.setImageResource(R.drawable._10);
+                break;
+            case 1:
+                rating.setImageResource(R.drawable._5);
+                break;
+            case 2:
+                rating.setImageResource(R.drawable._0);
+                break;
+            case 3:
+                rating.setImageResource(R.drawable.__5);
+                break;
+            case 4:
+                rating.setImageResource(R.drawable.__10);
+                break;
+            default:
+                rating.setImageResource(R.drawable._0);
+                break;
+        }
     }
 
     @Override
@@ -85,6 +145,13 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
             DrawerLayout d = (DrawerLayout)getActivity().findViewById(R.id.drawer);
             NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.navigation_view);
             d.openDrawer(navigationView);
+        }
+        else if(view.getId() == R.id.shareButton){
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "This is text of etiquette.");
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share Via"));
         }
         else if(view.getId() == R.id.submitComment)
         {

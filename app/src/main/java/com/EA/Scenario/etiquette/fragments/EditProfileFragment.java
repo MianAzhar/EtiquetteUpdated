@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.RoundedImageView;
 import com.EA.Scenario.etiquette.utils.User;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -38,6 +39,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,7 +122,12 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
 
         if(user.Picture != null)
         {
-
+            /*
+            ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
+            RoundedImageView pic = (RoundedImageView)getActivity().findViewById(R.id.profilePic);
+            Picasso.with(getActivity()).load(user.Picture).into(cover);
+            Picasso.with(getActivity()).load(user.Picture).into(pic);
+            */
         }
     }
 

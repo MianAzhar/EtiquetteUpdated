@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,7 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
             row = inflator.inflate(R.layout.etiquette_list_item, parent, false);
         }
 
+        /*
         TextView title = (TextView)row.findViewById(R.id.titleText);
         title.setText(textList.get(position).getTitle());
 
@@ -76,8 +78,9 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
                 rating.setImageResource(R.drawable._0);
                 break;
         }
+        */
 
-        /*
+
         TextView title = (TextView)row.findViewById(R.id.titleText);
         title.setText(textList.get(position).Scenario_Description);
 
@@ -85,18 +88,23 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
         type.setText(textList.get(position).Category_Name);
 
         TextView userName = (TextView)row.findViewById(R.id.userName);
-        type.setText(textList.get(position).User_Full_Name);
+        userName.setText(textList.get(position).User_Full_Name);
+
+        TextView views = (TextView)row.findViewById(R.id.views);
+        views.setText(textList.get(position).Scenario_Number_Of_Views);
 
         if(textList.get(position).Scenario_Picture != null)
         {
             ImageView img = (ImageView)row.findViewById(R.id.etiquetetImage);
-            img.setImageBitmap(StringToBitMap(textList.get(position).Scenario_Picture));
+            ///img.setImageBitmap(StringToBitMap(textList.get(position).Scenario_Picture));
+            Picasso.with(context).load(textList.get(position).Scenario_Picture).into(img);
         }
 
         if(textList.get(position).User_Picture != null)
         {
             ImageView img = (ImageView)row.findViewById(R.id.userImage);
-            img.setImageBitmap(StringToBitMap(textList.get(position).User_Picture));
+            //img.setImageBitmap(StringToBitMap(textList.get(position).User_Picture));
+            Picasso.with(context).load(textList.get(position).User_Picture).into(img);
         }
 
         ImageView rating = (ImageView)row.findViewById(R.id.ratingImage);
@@ -122,7 +130,6 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
                 rating.setImageResource(R.drawable._0);
                 break;
         }
-        */
 
         return row;
     }

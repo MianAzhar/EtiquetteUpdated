@@ -49,8 +49,10 @@ public class EtiquetteFetcher {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            progressDialog.dismiss();
-                            progressDialog = null;
+                            if(MainActivity.showDialog) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
                             JSONObject jsonResponse = new JSONObject(response);
                             String msg = jsonResponse.getString("status");
 
@@ -60,6 +62,7 @@ public class EtiquetteFetcher {
                                 etiquetteArrayList.clear();
                                 etiquetteArrayList.addAll(Arrays.asList(result));
                                 etiquetteListAdapter.notifyDataSetChanged();
+                                MainActivity.showDialog = true;
                             }
 
                         } catch (JSONException e) {
@@ -71,8 +74,10 @@ public class EtiquetteFetcher {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        progressDialog.dismiss();
-                        progressDialog = null;
+                        if(MainActivity.showDialog) {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                        }
                         Toast.makeText(context, "Check internet connection", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -87,7 +92,9 @@ public class EtiquetteFetcher {
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        progressDialog = ProgressDialog.show(context, null, "Fetching data", true, false);
+        if(MainActivity.showDialog)
+            progressDialog = ProgressDialog.show(context, null, "Fetching data", true, false);
+
         MainActivity.networkQueue.add(postRequest);
     }
 

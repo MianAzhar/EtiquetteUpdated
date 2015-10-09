@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static double latitude;
     public static double longitude;
 
+    public static boolean showDialog = true;
+
     public static Location location;
 
     public static ArrayList<String> arrayList;

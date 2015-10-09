@@ -33,6 +33,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -149,6 +150,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(user.Picture != null)
         {
+            /*
+            ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
+            RoundedImageView pic = (RoundedImageView)getActivity().findViewById(R.id.profilePic);
+            Picasso.with(getActivity()).load(user.Picture).into(cover);
+            Picasso.with(getActivity()).load(user.Picture).into(pic);
+            */
+
             Bitmap image = StringToBitMap(user.Picture);
 
             if(image != null)
@@ -156,6 +164,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 ((ImageView)getActivity().findViewById(R.id.coverPic)).setImageBitmap(image);
                 ((RoundedImageView)getActivity().findViewById(R.id.profilePic)).setImageBitmap(image);
             }
+
         }
     }
 

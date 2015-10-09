@@ -65,7 +65,8 @@
                 android:background="@drawable/share"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"/>
+                android:layout_marginBottom="5dp"
+                android:id="@+id/shareButton"/>
 
         </LinearLayout>
     </ScrollView>

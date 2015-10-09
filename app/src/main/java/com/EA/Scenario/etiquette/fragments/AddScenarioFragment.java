@@ -427,6 +427,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                             if(msg.equals("success"))
                             {
                                 Toast.makeText(getActivity(), "Scenario Added", Toast.LENGTH_SHORT).show();
+                                PopularFragment newFrag = new PopularFragment();
+                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
                             }
                             else {
                                 Toast.makeText(getActivity(), "Status fail", Toast.LENGTH_SHORT).show();
@@ -501,8 +505,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         Web API Call end
          */
 
-        MainActivity.etiquetteList.add(etiquette);
-        MainActivity.adapter.notifyDataSetChanged();
+        //MainActivity.etiquetteList.add(etiquette);
+        //MainActivity.adapter.notifyDataSetChanged();
 
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
@@ -513,7 +517,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
     void addChoice()
     {
-        if(choices.size() < 4) {
+        if(choices.size() < 9) {
             LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
             View row = inflator.inflate(R.layout.choice_layout, null);
 

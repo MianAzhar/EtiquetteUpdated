@@ -3,8 +3,9 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:background="@drawable/choice_background"
     android:weightSum="10"
-    android:id="@+id/choice_1_layout"
-    android:clickable="true">
+    android:clickable="true"
+    android:id="@+id/choiceView"
+    android:layout_marginTop="15dp">
 
     <TextView
         android:layout_width="0dp"
@@ -14,7 +15,8 @@
         android:textSize="20dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:id="@+id/choiceNumber"/>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -30,6 +32,7 @@
         android:layout_weight="8.5"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
-        android:textSize="11sp"/>
+        android:textSize="11sp"
+        android:id="@+id/choiceText"/>
 
 </LinearLayout>

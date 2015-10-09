@@ -76,12 +76,23 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
         EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
         etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-user", list, MainActivity.adapter, MainActivity.etiquetteList, params);
         */
+
+        Map<String, String> params = new HashMap<>();
+        // the POST parameters:
+        params.put("language", "english");
+
+        EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, MainActivity.adapter, MainActivity.etiquetteList, params);
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i == 0)
+                Bundle args = new Bundle();
+                args.putSerializable("data", MainActivity.etiquetteList.get(i));
+                if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() < 1)
                 {
                     NoChoiceFragment newFrag = new NoChoiceFragment();
+                    newFrag.setArguments(args);
                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                     //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     trans.addToBackStack(null);
@@ -92,6 +103,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
                 else
                 {
                     ChoiceFragment newFrag = new ChoiceFragment();
+                    newFrag.setArguments(args);
                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                     //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     trans.addToBackStack(null);

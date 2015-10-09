@@ -16,6 +16,10 @@ import android.widget.ListView;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +56,13 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
         final ListView list = (ListView)getActivity().findViewById(R.id.latestList);
 
         list.setAdapter(MainActivity.adapter);
+
+        Map<String, String> params = new HashMap<>();
+        // the POST parameters:
+        params.put("language", "english");
+
+        EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, MainActivity.adapter, MainActivity.etiquetteList, params);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
