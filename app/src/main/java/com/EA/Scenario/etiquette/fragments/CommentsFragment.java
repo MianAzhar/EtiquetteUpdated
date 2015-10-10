@@ -19,13 +19,24 @@ import android.widget.Toast;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.adapters.CommentListAdapter;
+import com.EA.Scenario.etiquette.utils.AddComment;
+import com.EA.Scenario.etiquette.utils.CommentClass;
+import com.EA.Scenario.etiquette.utils.CommentsFetcher;
+import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CommentsFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    CommentListAdapter ad;
+    ArrayList<CommentClass> commentList;
+    CommentListAdapter commentListAdapter;
+
+    String etiquetteId;
 
     public CommentsFragment() {
         // Required empty public constructor
@@ -44,14 +55,26 @@ public class CommentsFragment extends android.support.v4.app.Fragment implements
     {
         super.onActivityCreated(bundle);
 
+        Bundle args = getArguments();
+        etiquetteId = args.getString("data");
+
+        commentList = new ArrayList<>();
+
         ImageView menu = (ImageView) getActivity().findViewById(R.id.drawMenu);
         menu.setOnClickListener(this);
 
         ListView list = (ListView)getActivity().findViewById(R.id.commentList);
 
 
-        ad = new CommentListAdapter(getActivity(), MainActivity.arrayList);
-        list.setAdapter(ad);
+        commentListAdapter = new CommentListAdapter(getActivity(), commentList);
+        list.setAdapter(commentListAdapter);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("Scenario_Id", etiquetteId);
+
+        CommentsFetcher commentFetcher = new CommentsFetcher();
+        commentFetcher.getComments(getActivity(), list, commentListAdapter, commentList, params);
+
 
         ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
         submitComment.setOnClickListener(this);
@@ -81,10 +104,19 @@ public class CommentsFragment extends android.support.v4.app.Fragment implements
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                MainActivity.arrayList.add(text);
+                AddComment com = new AddComment();
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("Scenario_Id", etiquetteId);
+                params.put("Comment", text);
+                params.put("User_Name", MainActivity.userName);
+
+                com.addComment(getActivity(), params);
+
+
+                //MainActivity.arrayList.add(text);
                 ((EditText)getActivity().findViewById(R.id.commentText)).setText("");
-                ad.notifyDataSetChanged();
-                Toast.makeText(getActivity(), "Comment added", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -68,7 +68,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
     private String selectedImagePath;
     private ImageView img;
-    Bitmap selectedImageUri = null;
+    Bitmap selectedImageUri;
     ArrayList<View> choices;
     Dialog dialog;
 

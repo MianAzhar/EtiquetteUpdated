@@ -84,6 +84,10 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
         TextView title = (TextView)row.findViewById(R.id.titleText);
         title.setText(textList.get(position).Scenario_Description);
 
+        TextView time = (TextView)row.findViewById(R.id.time);
+        long t = System.currentTimeMillis() - textList.get(position).Scenario_Entry_Time;
+        time.setText(t/3600000 + "h");
+
         TextView type = (TextView)row.findViewById(R.id.typeText);
         type.setText(textList.get(position).Category_Name);
 

@@ -198,7 +198,7 @@ public class Etiquette implements Serializable {
     public String User_Picture;
     public String User_Full_Name;
     public String User_Name;
-    public String Scenario_Entry_Time;
+    public long Scenario_Entry_Time;
     public String Scenario_Number_Of_Views;
     public String Scenario_Location;
     public String Scenario_Current_Location;
@@ -214,14 +214,14 @@ public class Etiquette implements Serializable {
     public String Scenario_Option_7;
     public String Scenario_Option_8;
     public String Scenario_Option_9;
-    public String Scenario_Value_1;
-    public String Scenario_Value_2;
-    public String Scenario_Value_3;
-    public String Scenario_Value_4;
-    public String Scenario_Value_5;
-    public String Scenario_Value_6;
-    public String Scenario_Value_7;
-    public String Scenario_Value_8;
-    public String Scenario_Value_9;
+    public int Scenario_Value_1;
+    public int Scenario_Value_2;
+    public int Scenario_Value_3;
+    public int Scenario_Value_4;
+    public int Scenario_Value_5;
+    public int Scenario_Value_6;
+    public int Scenario_Value_7;
+    public int Scenario_Value_8;
+    public int Scenario_Value_9;
 
 }

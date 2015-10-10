@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/option3"
+        android:layout_marginTop="10dp"
+        android:id="@+id/answerBackground">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="10"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="@string/option_one_text"
+                android:id="@+id/optionText"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="85%"
+                android:textSize="30sp"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:id="@+id/optionValue"/>
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

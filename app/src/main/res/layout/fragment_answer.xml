@@ -67,7 +67,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="YOU CHOSE OPTION &quot;C&quot;"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp"
+                    android:id="@+id/choosenOption"/>
             </FrameLayout>
 
             <TextView
@@ -75,8 +76,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/people_chose"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+
+                android:id="@+id/answerLayout">
+
+                <!--
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -205,6 +214,8 @@
                         android:gravity="center"/>
                 </LinearLayout>
             </FrameLayout>
+            -->
+            </LinearLayout>
 
             <include layout="@layout/comment_layout" />
 

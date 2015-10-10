@@ -8,18 +8,21 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.utils.CommentClass;
+import com.EA.Scenario.etiquette.utils.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 /**
  * Created by Mian on 9/19/2015.
  */
-public class CommentListAdapter extends ArrayAdapter<String>
+public class CommentListAdapter extends ArrayAdapter<CommentClass>
 {
     //ArrayList<Etiquette> resources;
-    ArrayList<String> textList;
+    ArrayList<CommentClass> textList;
     Context context;
-    public CommentListAdapter(Context c, ArrayList<String> text)
+    public CommentListAdapter(Context c, ArrayList<CommentClass> text)
     {
         super(c , R.layout.comment_list_item, text);
         context = c;
@@ -38,7 +41,13 @@ public class CommentListAdapter extends ArrayAdapter<String>
 
         TextView body = (TextView)row.findViewById(R.id.commentBody);
 
-        body.setText(textList.get(position));
+        body.setText(textList.get(position).Comment);
+
+        RoundedImageView img = (RoundedImageView)row.findViewById(R.id.userImage);
+        Picasso.with(context).load(textList.get(position).User_Picture).into(img);
+
+        TextView user = (TextView)row.findViewById(R.id.userName);
+        user.setText(textList.get(position).User_Full_Name);
 
         return row;
     }

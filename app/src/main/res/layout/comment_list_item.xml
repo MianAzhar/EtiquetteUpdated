@@ -3,10 +3,12 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/user"/>
+    <com.EA.Scenario.etiquette.utils.RoundedImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/user"
+        android:id="@+id/userImage"
+        android:scaleType="fitXY"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,14 +20,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/john_smith"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:id="@+id/userName"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/long_text"
-            android:textSize="11sp"
+            android:textSize="13sp"
             android:id="@+id/commentBody"/>
 
     </LinearLayout>

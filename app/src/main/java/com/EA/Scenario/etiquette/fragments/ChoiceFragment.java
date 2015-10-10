@@ -1,6 +1,7 @@
 package com.EA.Scenario.etiquette.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -20,12 +21,25 @@ import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.EA.Scenario.etiquette.utils.RoundedImageView;
 import com.EA.Scenario.etiquette.utils.UpdateCounter;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,10 +51,13 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
     Etiquette etiquette;
 
     int index;
+    String selectedOption;
 
     SwipyRefreshLayout swipeUp;
 
     ArrayList<View> choicesView;
+
+    ProgressDialog progressDialog;
 
     public ChoiceFragment() {
         // Required empty public constructor
@@ -136,6 +153,10 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
 
         TextView views = (TextView)getActivity().findViewById(R.id.views);
         views.setText(etiquette.Scenario_Number_Of_Views);
+
+        TextView time = (TextView)getActivity().findViewById(R.id.time);
+        long t = System.currentTimeMillis() - etiquette.Scenario_Entry_Time;
+        time.setText(t/3600000 + "h");
 
         if(etiquette.Scenario_Picture != null)
         {
@@ -269,14 +290,139 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
         }
         else if(view.getId() == R.id.choiceView)
         {
+            /*
             AnswerFragment newFrag = new AnswerFragment();
             android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
             //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.addToBackStack(null);
             //trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
             trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
+            */
+
+            TextView chNo = (TextView)view.findViewById(R.id.choiceNumber);
+            selectedOption = chNo.getText().toString();
+
+            choiceSelected(selectedOption);
         }
     }
 
+    void choiceSelected(String choice)
+    {
+        final int number = choice.charAt(0) - 64;
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/get-scenario-option-result",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String msg = jsonResponse.getString("status");
+
+                            if(msg.equals("success")) {
+                                JSONObject data = jsonResponse.getJSONObject("data");
+                                etiquette.Scenario_Value_1 = data.getInt("Option1");
+                                etiquette.Scenario_Value_2 = data.getInt("Option2");
+                                etiquette.Scenario_Value_3 = data.getInt("Option3");
+                                etiquette.Scenario_Value_4 = data.getInt("Option4");
+                                etiquette.Scenario_Value_5 = data.getInt("Option5");
+                                etiquette.Scenario_Value_6 = data.getInt("Option6");
+                                etiquette.Scenario_Value_7 = data.getInt("Option7");
+                                etiquette.Scenario_Value_8 = data.getInt("Option8");
+                                etiquette.Scenario_Value_9 = data.getInt("Option9");
+
+
+                                int no = data.getInt("Total_Comments");
+
+                                Bundle args = new Bundle();
+                                args.putInt("total", no);
+
+                                        ((TextView) getActivity().findViewById(R.id.numberOfComments)).setText(no + "");
+
+                                JSONArray comments = jsonResponse.getJSONArray("Comments");
+
+                                if(comments.length() > 0)
+                                {
+                                    JSONObject obj1 = comments.getJSONObject(0);
+
+                                    args.putString("User_Picture1", obj1.getString("User_Picture"));
+                                    args.putString("User_Name1", obj1.getString("Full_User_Name"));
+                                    args.putString("1", obj1.getString("1"));
+
+
+                                    if(comments.length() > 1)
+                                    {
+                                        JSONObject obj2 = comments.getJSONObject(1);
+
+                                        args.putString("User_Picture2", obj2.getString("User_Picture"));
+                                        args.putString("User_Name2", obj2.getString("Full_User_Name"));
+                                        args.putString("2", obj2.getString("2"));
+
+                                    }
+                                }
+
+
+
+
+                                gotoAnswer();
+                            }
+                            else {
+                                gotoAnswer();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        if(MainActivity.showDialog) {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                        }
+                        Toast.makeText(getActivity(), "Check internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> parameters = new HashMap<>();
+
+                parameters.put("Selected_Option", Integer.toString(number));
+                parameters.put("Scenario_Id", etiquette.Etiquette_Id);
+                parameters.put("User_Name", etiquette.User_Name);
+
+                return parameters;
+            }
+        };
+
+        RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        postRequest.setRetryPolicy(policy);
+
+        progressDialog = ProgressDialog.show(getActivity(), null, "Fetching data", true, false);
+
+        MainActivity.networkQueue.add(postRequest);
+    }
+
+    void gotoAnswer()
+    {
+        Bundle args = new Bundle();
+        args.putSerializable("data", etiquette);
+        args.putString("option", selectedOption);
+
+        AnswerFragment newFrag = new AnswerFragment();
+        newFrag.setArguments(args);
+        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        trans.addToBackStack(null);
+        //trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+        trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
+    }
 
 }
