@@ -36,8 +36,8 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
     ArrayList<String> categoryList;
 
     ListView list;
-    EtiquetteListAdapter listAdapter;
-    ArrayList<Etiquette> etiquetteArrayList;
+    //EtiquetteListAdapter listAdapter;
+    //ArrayList<Etiquette> etiquetteArrayList;
 
     GridView gridView;
 
@@ -61,9 +61,9 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
         menu.setOnClickListener(this);
 
         list = (ListView)getActivity().findViewById(R.id.categoryList);
-        etiquetteArrayList = new ArrayList<>();
-        listAdapter = new EtiquetteListAdapter(getActivity(), etiquetteArrayList);
-        list.setAdapter(listAdapter);
+        //etiquetteArrayList = new ArrayList<>();
+        //listAdapter = new EtiquetteListAdapter(getActivity(), etiquetteArrayList);
+        list.setAdapter(MainActivity.adapter);
 
         ImageButton latest = (ImageButton) getActivity().findViewById(R.id.latestButton_categories);
         ImageButton popular = (ImageButton) getActivity().findViewById(R.id.popularButton_categories);
@@ -97,7 +97,7 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
                 params.put("Category_Name", categoryList.get(position));
 
                 EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
-                etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-category", list, listAdapter, etiquetteArrayList, params);
+                etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-category", list, MainActivity.adapter, MainActivity.etiquetteList, params);
 
                 ((TextView)getActivity().findViewById(R.id.screenTitle)).setText(categoryList.get(position));
 
@@ -111,7 +111,8 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle args = new Bundle();
-                args.putSerializable("data", etiquetteArrayList.get(i));
+                args.putSerializable("data", MainActivity.etiquetteList.get(i));
+                args.putInt("index", i);
                 if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() < 1)
                 {
                     NoChoiceFragment newFrag = new NoChoiceFragment();

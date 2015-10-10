@@ -115,19 +115,20 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
 
         if(user.Email != null)
         {
-            ((EditText)getActivity().findViewById(R.id.emailField)).setText(user.Email);
+            if(user.Email.length() > 0)
+                ((EditText)getActivity().findViewById(R.id.emailField)).setText(user.Email);
         }
 
         ((EditText)getActivity().findViewById(R.id.phoneNumberField)).setText(user.Phone);
 
         if(user.Picture != null)
         {
-            /*
+
             ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
             RoundedImageView pic = (RoundedImageView)getActivity().findViewById(R.id.profilePic);
             Picasso.with(getActivity()).load(user.Picture).into(cover);
             Picasso.with(getActivity()).load(user.Picture).into(pic);
-            */
+
         }
     }
 

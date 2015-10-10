@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gps = new GPSTracker(this);
 
         MainActivity.etiquetteList = new ArrayList<>();
-        adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
+
 
         arrayList = new ArrayList<>();
 
@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
         MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
         MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
+
+        adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
 

@@ -17,12 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
+import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.EA.Scenario.etiquette.utils.UpdateCounter;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +35,10 @@ import java.util.ArrayList;
 public class ChoiceFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     Etiquette etiquette;
+
+    int index;
+
+    SwipyRefreshLayout swipeUp;
 
     ArrayList<View> choicesView;
 
@@ -53,6 +62,15 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
 
         Bundle args = getArguments();
         etiquette = (Etiquette)args.getSerializable("data");
+        index = args.getInt("index", 0);
+
+        UpdateCounter counter = new UpdateCounter();
+
+        Map<String, String> map = new HashMap<String, String>();
+
+        map.put("Scenario_Id", etiquette.Etiquette_Id);
+
+        counter.updateCounter(getActivity(), map);
 
         if(etiquette.Scenario_Option_1.length() > 0)
         {
@@ -169,20 +187,44 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
         c4.setOnClickListener(this);
         */
 
-        SwipyRefreshLayout m = (SwipyRefreshLayout)getActivity().findViewById(R.id.scrollView1);
-
-        m.setRefreshing(false);
+        swipeUp = (SwipyRefreshLayout)getActivity().findViewById(R.id.scrollView1);
 
 
-        m.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+        swipeUp.setRefreshing(false);
+
+
+        swipeUp.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh(SwipyRefreshLayoutDirection direction) {
-                AnswerFragment newFrag = new AnswerFragment();
-                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                trans.addToBackStack(null);
-                trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
-                trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
+                if(index < MainActivity.etiquetteList.size() - 1) {
+                    Bundle args = new Bundle();
+                    args.putSerializable("data", MainActivity.etiquetteList.get(index+1));
+                    args.putInt("index", index+1);
+
+                    if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1.length() < 1)
+                    {
+                        NoChoiceFragment newFrag = new NoChoiceFragment();
+                        newFrag.setArguments(args);
+                        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        trans.addToBackStack(null);
+                        trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                        trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
+                    }
+                    else
+                    {
+                        ChoiceFragment newFrag = new ChoiceFragment();
+                        newFrag.setArguments(args);
+                        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        trans.addToBackStack(null);
+                        trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                        trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                    }
+                }
+                else {
+                    swipeUp.setRefreshing(false);
+                }
             }
         });
 

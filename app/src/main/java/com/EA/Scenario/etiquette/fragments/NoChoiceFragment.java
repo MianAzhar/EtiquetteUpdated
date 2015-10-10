@@ -22,17 +22,26 @@ import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.EA.Scenario.etiquette.utils.UpdateCounter;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NoChoiceFragment extends android.support.v4.app.Fragment implements GestureDetector.OnGestureListener, View.OnClickListener {
-
-    private GestureDetector gDetector;
+public class NoChoiceFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     Etiquette etiquette;
+
+    int index;
+
+    SwipyRefreshLayout swipeUp;
 
     public NoChoiceFragment() {
         // Required empty public constructor
@@ -47,18 +56,6 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_no_choice, container, false);
 
-        view.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    return gDetector.onTouchEvent(event);
-                }
-                return true;
-
-
-            }
-        });
-
         return view;
     }
 
@@ -66,10 +63,18 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
 
-        gDetector = new GestureDetector(this);
-
         Bundle args = getArguments();
         etiquette = (Etiquette)args.getSerializable("data");
+
+        index = args.getInt("index", 0);
+
+        UpdateCounter counter = new UpdateCounter();
+
+        Map<String, String> map = new HashMap<String, String>();
+
+        map.put("Scenario_Id", etiquette.Etiquette_Id);
+
+        counter.updateCounter(getActivity(), map);
 
         ImageButton submitComment = (ImageButton)getActivity().findViewById(R.id.submitComment);
         submitComment.setOnClickListener(this);
@@ -82,9 +87,6 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
 
         ImageButton share = (ImageButton)getActivity().findViewById(R.id.shareButton);
         share.setOnClickListener(this);
-
-        ScrollView mScrollView = (ScrollView)getActivity().findViewById(R.id.scrollView);
-        mScrollView.requestDisallowInterceptTouchEvent(true);
 
         TextView title = (TextView)getActivity().findViewById(R.id.titleText);
         title.setText(etiquette.Scenario_Description);
@@ -135,6 +137,47 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
                 rating.setImageResource(R.drawable._0);
                 break;
         }
+
+        swipeUp = (SwipyRefreshLayout)getActivity().findViewById(R.id.scrollView1);
+
+
+        swipeUp.setRefreshing(false);
+
+
+        swipeUp.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh(SwipyRefreshLayoutDirection direction) {
+                if(index < MainActivity.etiquetteList.size() - 1) {
+                    Bundle args = new Bundle();
+                    args.putSerializable("data", MainActivity.etiquetteList.get(index+1));
+                    args.putInt("index", index+1);
+
+                    if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1.length() < 1)
+                    {
+                        NoChoiceFragment newFrag = new NoChoiceFragment();
+                        newFrag.setArguments(args);
+                        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        trans.addToBackStack(null);
+                        trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                        trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
+                    }
+                    else
+                    {
+                        ChoiceFragment newFrag = new ChoiceFragment();
+                        newFrag.setArguments(args);
+                        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        trans.addToBackStack(null);
+                        trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                        trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                    }
+                }
+                else {
+                    swipeUp.setRefreshing(false);
+                }
+            }
+        });
     }
 
     @Override
@@ -182,35 +225,4 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
         }
     }
 
-    @Override
-    public boolean onDown(MotionEvent arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    @Override
-    public boolean onFling(MotionEvent start, MotionEvent finish, float xVelocity, float yVelocity) {
-        if (start.getRawY() > finish.getRawY()) {
-            if(start.getRawY() - finish.getRawY() > 200)
-                Toast.makeText(getActivity().getApplicationContext(), "Swipe Up", Toast.LENGTH_SHORT).show();
-        }
-        return true;
-    }
-    @Override
-    public void onLongPress(MotionEvent arg0) {
-        // TODO Auto-generated method stub
-    }
-    @Override
-    public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    @Override
-    public void onShowPress(MotionEvent arg0) {
-        // TODO Auto-generated method stub
-    }
-    @Override
-    public boolean onSingleTapUp(MotionEvent arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }

@@ -21,6 +21,7 @@ import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
+import com.EA.Scenario.etiquette.utils.UpdateCounter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +90,8 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle args = new Bundle();
                 args.putSerializable("data", MainActivity.etiquetteList.get(i));
+                args.putInt("index", i);
+
                 if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() < 1)
                 {
                     NoChoiceFragment newFrag = new NoChoiceFragment();

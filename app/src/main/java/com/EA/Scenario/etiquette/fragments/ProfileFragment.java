@@ -146,17 +146,19 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(user.Email != null)
         {
-            ((TextView)getActivity().findViewById(R.id.emailField)).setText(user.Email);
+            if(user.Email.length() > 0)
+                ((TextView)getActivity().findViewById(R.id.emailField)).setText(user.Email);
         }
         if(user.Picture != null)
         {
-            /*
+
             ImageView cover = (ImageView)getActivity().findViewById(R.id.coverPic);
             RoundedImageView pic = (RoundedImageView)getActivity().findViewById(R.id.profilePic);
             Picasso.with(getActivity()).load(user.Picture).into(cover);
             Picasso.with(getActivity()).load(user.Picture).into(pic);
-            */
 
+
+            /*
             Bitmap image = StringToBitMap(user.Picture);
 
             if(image != null)
@@ -164,7 +166,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 ((ImageView)getActivity().findViewById(R.id.coverPic)).setImageBitmap(image);
                 ((RoundedImageView)getActivity().findViewById(R.id.profilePic)).setImageBitmap(image);
             }
-
+            */
         }
     }
 

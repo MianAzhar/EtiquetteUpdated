@@ -16,9 +16,9 @@ public class Etiquette implements Serializable {
 
     public Etiquette(String title, String cat, int rating)
     {
-        this.title = title;
-        this.type = cat;
-        this.meter = rating;
+        this.Scenario_Description = title;
+        this.Category_Name = cat;
+        this.Scenario_Level = rating;
         uri = null;
     }
 

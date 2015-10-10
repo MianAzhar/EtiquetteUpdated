@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
 
 import java.util.HashMap;
@@ -67,30 +68,35 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i == 0)
-                {
-                    NoChoiceFragment newFrag = new NoChoiceFragment();
-                    android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                    //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    trans.addToBackStack(null);
-                    trans.replace(R.id.fragment_container, newFrag, "NoChoiceFragment").commit();
-                }
-                else if(i == 1)
-                {
-                    AnswerFragment newFrag = new AnswerFragment();
-                    android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                    //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    trans.addToBackStack(null);
-                    trans.replace(R.id.fragment_container, newFrag, "AnswerFragment").commit();
-                }
-                else if(i == 2)
-                {
-                    ChoiceFragment newFrag = new ChoiceFragment();
-                    android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                    //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    trans.addToBackStack(null);
-                    trans.replace(R.id.fragment_container, newFrag, "ChoiceFragment").commit();
-                }
+                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Bundle args = new Bundle();
+                        args.putSerializable("data", MainActivity.etiquetteList.get(i));
+                        args.putInt("index", i);
+
+                        if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() < 1)
+                        {
+                            NoChoiceFragment newFrag = new NoChoiceFragment();
+                            newFrag.setArguments(args);
+                            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                            //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            trans.addToBackStack(null);
+                            //trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                            //trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                            trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
+                        }
+                        else
+                        {
+                            ChoiceFragment newFrag = new ChoiceFragment();
+                            newFrag.setArguments(args);
+                            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                            //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            trans.addToBackStack(null);
+                            trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                        }
+                    }
+                });
             }
         });
     }
