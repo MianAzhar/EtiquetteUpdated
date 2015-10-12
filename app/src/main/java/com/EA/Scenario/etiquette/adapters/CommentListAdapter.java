@@ -41,13 +41,13 @@ public class CommentListAdapter extends ArrayAdapter<CommentClass>
 
         TextView body = (TextView)row.findViewById(R.id.commentBody);
 
-        body.setText(textList.get(position).Comment);
+        body.setText(textList.get(position).comment);
 
         RoundedImageView img = (RoundedImageView)row.findViewById(R.id.userImage);
-        Picasso.with(context).load(textList.get(position).User_Picture).into(img);
+        Picasso.with(context).load(textList.get(position).picture).into(img);
 
         TextView user = (TextView)row.findViewById(R.id.userName);
-        user.setText(textList.get(position).User_Full_Name);
+        user.setText(textList.get(position).name);
 
         return row;
     }
