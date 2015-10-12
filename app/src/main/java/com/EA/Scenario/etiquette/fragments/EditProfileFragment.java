@@ -119,7 +119,7 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
                 ((EditText)getActivity().findViewById(R.id.emailField)).setText(user.Email);
         }
 
-        ((EditText)getActivity().findViewById(R.id.phoneNumberField)).setText(user.Phone);
+        ((EditText)getActivity().findViewById(R.id.phoneNumberField)).setText(user.Mobile_Number);
 
         if(user.Picture != null)
         {
@@ -258,7 +258,7 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
                 Map<String, String> params = new HashMap<>();
                 // the POST parameters:
                 params.put("language", "english");
-                params.put("Phone_Number", user.Phone);
+                params.put("Phone_Number", user.Mobile_Number);
                 params.put("User_Name", user.User_Name);
                 params.put("Name", name);
                 params.put("Email", email);

@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     public String User_Name;
     public String Email;
-    public String Phone;
+    public String Mobile_Number;
     public String Picture;
     public String Name;
 }

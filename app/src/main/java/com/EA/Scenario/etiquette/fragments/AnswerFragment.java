@@ -75,42 +75,42 @@ public class AnswerFragment extends android.support.v4.app.Fragment implements V
             addOption(etiquette.Scenario_Option_1, etiquette.Scenario_Value_1);
         }
 
-        if(etiquette.Scenario_Option_2.length() > 0)
+        if(etiquette.Scenario_Option_2 != null)
         {
             addOption(etiquette.Scenario_Option_2, etiquette.Scenario_Value_2);
         }
 
-        if(etiquette.Scenario_Option_3.length() > 0)
+        if(etiquette.Scenario_Option_3 != null)
         {
             addOption(etiquette.Scenario_Option_3, etiquette.Scenario_Value_3);
         }
 
-        if(etiquette.Scenario_Option_4.length() > 0)
+        if(etiquette.Scenario_Option_4 != null)
         {
             addOption(etiquette.Scenario_Option_4, etiquette.Scenario_Value_4);
         }
 
-        if(etiquette.Scenario_Option_5.length() > 0)
+        if(etiquette.Scenario_Option_5 != null)
         {
             addOption(etiquette.Scenario_Option_5, etiquette.Scenario_Value_5);
         }
 
-        if(etiquette.Scenario_Option_6.length() > 0)
+        if(etiquette.Scenario_Option_6 != null)
         {
             addOption(etiquette.Scenario_Option_6, etiquette.Scenario_Value_6);
         }
 
-        if(etiquette.Scenario_Option_7.length() > 0)
+        if(etiquette.Scenario_Option_7 != null)
         {
             addOption(etiquette.Scenario_Option_7, etiquette.Scenario_Value_7);
         }
 
-        if(etiquette.Scenario_Option_8.length() > 0)
+        if(etiquette.Scenario_Option_8 != null)
         {
             addOption(etiquette.Scenario_Option_8, etiquette.Scenario_Value_8);
         }
 
-        if(etiquette.Scenario_Option_9.length() > 0)
+        if(etiquette.Scenario_Option_9 != null)
         {
             addOption(etiquette.Scenario_Option_9, etiquette.Scenario_Value_9);
         }

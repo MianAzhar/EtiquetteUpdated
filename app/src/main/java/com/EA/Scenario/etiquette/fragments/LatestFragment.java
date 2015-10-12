@@ -75,7 +75,7 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
                         args.putSerializable("data", MainActivity.etiquetteList.get(i));
                         args.putInt("index", i);
 
-                        if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() < 1)
+                        if(MainActivity.etiquetteList.get(i).Scenario_Option_1 == null)
                         {
                             NoChoiceFragment newFrag = new NoChoiceFragment();
                             newFrag.setArguments(args);

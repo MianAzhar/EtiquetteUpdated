@@ -307,6 +307,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Fragment popularFragment = getSupportFragmentManager().findFragmentByTag(Constants.PopularFragmentTag);
         Fragment latestFragment = getSupportFragmentManager().findFragmentByTag(Constants.LatestFragmentTag);
         Fragment categoriesFragment = getSupportFragmentManager().findFragmentByTag(Constants.CategoriesFragmentTag);
+        Fragment choiceFragment = getSupportFragmentManager().findFragmentByTag(Constants.ChoiceFragmentTag);
+        Fragment noChoiceFragment = getSupportFragmentManager().findFragmentByTag(Constants.NoChoiceFragmentTag);
 
         if ((popularFragment != null && popularFragment.isVisible())
                 || (latestFragment != null && latestFragment.isVisible())
@@ -327,7 +329,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
-        } else {
+        }
+        else if((choiceFragment != null && choiceFragment.isVisible())
+                || (noChoiceFragment != null && noChoiceFragment.isVisible())){
+            PopularFragment newFrag = new PopularFragment();
+            android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+        }
+        else {
             super.onBackPressed();
         }
 

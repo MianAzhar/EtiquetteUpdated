@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -175,13 +176,13 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
                     args.putSerializable("data", MainActivity.etiquetteList.get(index+1));
                     args.putInt("index", index+1);
 
-                    if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1.length() < 1)
+                    if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1 == null)
                     {
                         NoChoiceFragment newFrag = new NoChoiceFragment();
                         newFrag.setArguments(args);
                         android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        trans.addToBackStack(null);
+                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        //trans.addToBackStack(null);
                         trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
                         trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
                     }
@@ -190,8 +191,8 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
                         ChoiceFragment newFrag = new ChoiceFragment();
                         newFrag.setArguments(args);
                         android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        trans.addToBackStack(null);
+                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        //trans.addToBackStack(null);
                         trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
                         trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
                     }

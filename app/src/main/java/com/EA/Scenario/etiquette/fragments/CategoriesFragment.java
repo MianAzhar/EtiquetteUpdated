@@ -113,7 +113,7 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
                 Bundle args = new Bundle();
                 args.putSerializable("data", MainActivity.etiquetteList.get(i));
                 args.putInt("index", i);
-                if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() < 1)
+                if(MainActivity.etiquetteList.get(i).Scenario_Option_1 == null)
                 {
                     NoChoiceFragment newFrag = new NoChoiceFragment();
                     newFrag.setArguments(args);

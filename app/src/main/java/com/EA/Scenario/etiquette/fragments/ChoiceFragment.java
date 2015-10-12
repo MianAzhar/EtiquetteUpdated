@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -89,47 +90,47 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
 
         counter.updateCounter(getActivity(), map);
 
-        if(etiquette.Scenario_Option_1.length() > 0)
+        if(etiquette.Scenario_Option_1 != null)
         {
             addOption(etiquette.Scenario_Option_1, "A");
         }
 
-        if(etiquette.Scenario_Option_2.length() > 0)
+        if(etiquette.Scenario_Option_2 != null)
         {
             addOption(etiquette.Scenario_Option_2, "B");
         }
 
-        if(etiquette.Scenario_Option_3.length() > 0)
+        if(etiquette.Scenario_Option_3 != null)
         {
             addOption(etiquette.Scenario_Option_3, "C");
         }
 
-        if(etiquette.Scenario_Option_4.length() > 0)
+        if(etiquette.Scenario_Option_4 != null)
         {
             addOption(etiquette.Scenario_Option_4, "D");
         }
 
-        if(etiquette.Scenario_Option_5.length() > 0)
+        if(etiquette.Scenario_Option_5 != null)
         {
             addOption(etiquette.Scenario_Option_5, "E");
         }
 
-        if(etiquette.Scenario_Option_6.length() > 0)
+        if(etiquette.Scenario_Option_6 != null)
         {
             addOption(etiquette.Scenario_Option_6, "F");
         }
 
-        if(etiquette.Scenario_Option_7.length() > 0)
+        if(etiquette.Scenario_Option_7 != null)
         {
             addOption(etiquette.Scenario_Option_7, "G");
         }
 
-        if(etiquette.Scenario_Option_8.length() > 0)
+        if(etiquette.Scenario_Option_8 != null)
         {
             addOption(etiquette.Scenario_Option_8, "H");
         }
 
-        if(etiquette.Scenario_Option_9.length() > 0)
+        if(etiquette.Scenario_Option_9 != null)
         {
             addOption(etiquette.Scenario_Option_9, "I");
         }
@@ -222,13 +223,13 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
                     args.putSerializable("data", MainActivity.etiquetteList.get(index+1));
                     args.putInt("index", index+1);
 
-                    if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1.length() < 1)
+                    if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1 == null)
                     {
                         NoChoiceFragment newFrag = new NoChoiceFragment();
                         newFrag.setArguments(args);
                         android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        trans.addToBackStack(null);
+                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        //trans.addToBackStack(null);
                         trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
                         trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
                     }
@@ -237,8 +238,8 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
                         ChoiceFragment newFrag = new ChoiceFragment();
                         newFrag.setArguments(args);
                         android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                        //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        trans.addToBackStack(null);
+                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        //trans.addToBackStack(null);
                         trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
                         trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
                     }
