@@ -23,7 +23,10 @@ import android.widget.Toast;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.AddComment;
+import com.EA.Scenario.etiquette.utils.CommentClass;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.EA.Scenario.etiquette.utils.RoundedImageView;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -65,6 +68,28 @@ public class AnswerFragment extends android.support.v4.app.Fragment implements V
 
         String op = args.getString("option");
 
+        int totalComments = args.getInt("totalComments", 0);
+
+        String json = args.getString("comments");
+
+        ((TextView)getActivity().findViewById(R.id.numberOfComments)).setText(totalComments + "");
+
+        Gson gson = new Gson();
+
+        CommentClass[] comments = gson.fromJson(json, CommentClass[].class);
+
+        for(int i = 0; (i < comments.length) && (i < 2); i++)
+        {
+            LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+            View row1 = inflator.inflate(R.layout.comment_list_item, null);
+            Picasso.with(getActivity()).load(comments[i].picture).into(((RoundedImageView) row1.findViewById(R.id.userImage)));
+
+            ((TextView)row1.findViewById(R.id.userName)).setText(comments[i].name);
+            ((TextView)row1.findViewById(R.id.commentBody)).setText(comments[i].comment);
+
+            LinearLayout l = (LinearLayout)getActivity().findViewById(R.id.fewComments);
+            l.addView(row1);
+        }
 
 
         if(etiquette.Scenario_Option_1.length() > 0)

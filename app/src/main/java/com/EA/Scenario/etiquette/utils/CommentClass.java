@@ -1,5 +1,7 @@
 package com.EA.Scenario.etiquette.utils;
 
+import android.os.Parcelable;
+
 /**
  * Created by mian_ on 10/10/2015.
  */

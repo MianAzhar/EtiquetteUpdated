@@ -26,4 +26,8 @@ public class Constants {
     public static final String NoChoiceFragmentTag = "NoChoiceFragment";
 
     public static final String EtiquettePreferences = "EtiquettePreferences";
+
+    public static final String UserScenario = "get-all-scenarios-of-user";
+    public static final String TagScenario = "get-all-scenarios-hash-tags";
+    public static final String PlaceScenario = "get-all-scenarios-of-location";
 }

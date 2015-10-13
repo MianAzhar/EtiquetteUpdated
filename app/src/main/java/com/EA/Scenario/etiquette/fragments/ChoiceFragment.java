@@ -320,9 +320,9 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
                             progressDialog = null;
 
                             JSONObject jsonResponse = new JSONObject(response);
-                            String msg = jsonResponse.getString("status");
+                            String msg = jsonResponse.getString("message");
 
-                            if(msg.equals("success")) {
+                            if(msg.equals("Result is extracted successfully")) {
                                 JSONObject data = jsonResponse.getJSONObject("data");
                                 etiquette.Scenario_Value_1 = data.getInt("Option1");
                                 etiquette.Scenario_Value_2 = data.getInt("Option2");
@@ -338,39 +338,22 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
                                 int no = data.getInt("Total_Comments");
 
                                 Bundle args = new Bundle();
-                                args.putInt("total", no);
+                                args.putInt("totalComments", no);
 
-                                        ((TextView) getActivity().findViewById(R.id.numberOfComments)).setText(no + "");
-
-                                JSONArray comments = jsonResponse.getJSONArray("Comments");
-
-                                if(comments.length() > 0)
-                                {
-                                    JSONObject obj1 = comments.getJSONObject(0);
-
-                                    args.putString("User_Picture1", obj1.getString("User_Picture"));
-                                    args.putString("User_Name1", obj1.getString("Full_User_Name"));
-                                    args.putString("1", obj1.getString("1"));
-
-
-                                    if(comments.length() > 1)
-                                    {
-                                        JSONObject obj2 = comments.getJSONObject(1);
-
-                                        args.putString("User_Picture2", obj2.getString("User_Picture"));
-                                        args.putString("User_Name2", obj2.getString("Full_User_Name"));
-                                        args.putString("2", obj2.getString("2"));
-
-                                    }
-                                }
-
-
-
-
-                                gotoAnswer();
+                                String comments = jsonResponse.getString("Comments");
+                                args.putString("comments", comments);
+                                gotoAnswer(args);
                             }
-                            else {
-                                gotoAnswer();
+                            else if(msg.equals("Option is already updated by user")){
+                                JSONObject data = jsonResponse.getJSONObject("data");
+                                int no = data.getInt("Total_Comments");
+
+                                Bundle args = new Bundle();
+                                args.putInt("totalComments", no);
+
+                                String comments = jsonResponse.getString("Comments");
+                                args.putString("comments", comments);
+                                gotoAnswer(args);
                             }
 
                         } catch (JSONException e) {
@@ -411,11 +394,11 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
         MainActivity.networkQueue.add(postRequest);
     }
 
-    void gotoAnswer()
+    void gotoAnswer(Bundle args)
     {
-        Bundle args = new Bundle();
         args.putSerializable("data", etiquette);
         args.putString("option", selectedOption);
+
 
         AnswerFragment newFrag = new AnswerFragment();
         newFrag.setArguments(args);

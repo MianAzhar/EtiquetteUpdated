@@ -60,9 +60,14 @@ public class EtiquetteFetcher {
                                 Gson gson = new Gson();
                                 Etiquette[] result = gson.fromJson(jsonResponse.getString("data"), Etiquette[].class);
                                 etiquetteArrayList.clear();
+                                etiquetteListAdapter.clear();
                                 etiquetteArrayList.addAll(Arrays.asList(result));
                                 etiquetteListAdapter.notifyDataSetChanged();
                                 MainActivity.showDialog = true;
+                            }
+                            else {
+                                etiquetteListAdapter.clear();
+                                etiquetteListAdapter.notifyDataSetChanged();
                             }
 
                         } catch (JSONException e) {

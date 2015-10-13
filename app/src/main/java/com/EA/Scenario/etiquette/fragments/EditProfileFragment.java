@@ -168,7 +168,7 @@ public class EditProfileFragment extends android.support.v4.app.Fragment impleme
                     FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
                     Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
                     parcelFileDescriptor.close();
-                    Bitmap resized = Bitmap.createScaledBitmap(image, 500, 300, true);
+                    Bitmap resized = Bitmap.createScaledBitmap(image, 600, 400, true);
                     ImageView mImageView = (ImageView)getActivity().findViewById(R.id.profilePic);
                     mImageView.setImageBitmap(resized);
 

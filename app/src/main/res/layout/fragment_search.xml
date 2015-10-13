@@ -14,14 +14,15 @@
         android:id="@+id/relativeLayout">
 
 
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="20dp"
             android:layout_centerVertical="true"
-            android:id="@+id/left"
-            android:background="@drawable/back" />
+            android:id="@+id/searchBackButton"
+            android:background="@drawable/back"
+            android:padding="5dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -46,7 +47,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/editText3"
+            android:id="@+id/searchText"
             android:hint="@string/search_location"
             android:background="#00000000"
             android:layout_marginLeft="20dp"
@@ -73,7 +74,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageButton7"
+                android:id="@+id/searchIcon"
                 android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center_vertical"
@@ -93,14 +94,14 @@
         <ImageButton
             android:layout_width="119dp"
             android:layout_height="match_parent"
-            android:id="@+id/imageButton4"
+            android:id="@+id/tags"
             android:layout_gravity="left|top"
             android:background="@drawable/tags" />
 
         <ImageButton
             android:layout_width="119dp"
             android:layout_height="match_parent"
-            android:id="@+id/imageButton5"
+            android:id="@+id/places"
             android:layout_gravity="center"
             android:background="@drawable/places"
             android:layout_marginLeft="5dp"
@@ -109,18 +110,19 @@
         <ImageButton
             android:layout_width="119dp"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton6"
+            android:id="@+id/people"
             android:layout_gravity="right|center_vertical"
             android:background="@drawable/people" />
-
     </FrameLayout>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:id="@+id/searchList"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="5dp"
+        android:scrollbarStyle="outsideInset"
+        android:dividerHeight="5dp"/>
 
 
 </LinearLayout>

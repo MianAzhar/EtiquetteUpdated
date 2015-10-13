@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.AddComment;
+import com.EA.Scenario.etiquette.utils.CommentClass;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.EA.Scenario.etiquette.utils.RoundedImageView;
@@ -36,6 +37,7 @@ import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.squareup.picasso.Picasso;
@@ -224,8 +226,23 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
 
                                 ((TextView)getActivity().findViewById(R.id.numberOfComments)).setText(no + "");
 
-                                JSONArray comments = jsonResponse.getJSONArray("Comments");
+                                Gson gson = new Gson();
 
+                                CommentClass[] comments = gson.fromJson(jsonResponse.getString("Comments"), CommentClass[].class);
+
+                                for(int i = 0; (i < comments.length) && (i < 2); i++)
+                                {
+                                    LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                                    View row1 = inflator.inflate(R.layout.comment_list_item, null);
+                                    Picasso.with(getActivity()).load(comments[i].picture).into(((RoundedImageView) row1.findViewById(R.id.userImage)));
+
+                                    ((TextView)row1.findViewById(R.id.userName)).setText(comments[i].name);
+                                    ((TextView)row1.findViewById(R.id.commentBody)).setText(comments[i].comment);
+
+                                    LinearLayout l = (LinearLayout)getActivity().findViewById(R.id.fewComments);
+                                    l.addView(row1);
+                                }
+                                /*
                                 if(comments.length() > 0)
                                 {
                                     JSONObject obj1 = comments.getJSONObject(0);
@@ -255,7 +272,7 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
                                         l.addView(row2);
                                     }
                                 }
-
+                                */
 
                                 //gotoAnswer();
                             }

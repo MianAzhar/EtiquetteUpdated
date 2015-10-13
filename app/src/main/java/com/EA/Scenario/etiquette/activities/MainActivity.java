@@ -77,13 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         MainActivity.etiquetteList = new ArrayList<>();
 
-        /*
-        MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
-        MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TOILET", 1));
-        MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
-        MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
-        MainActivity.etiquetteList.add(new Etiquette("It is often crowded in economy class in plane rides. We understand everyone wants to get as much leg room as possible.", "TRAVEL", 1));
-        */
         adapter = new EtiquetteListAdapter(this, MainActivity.etiquetteList);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
@@ -117,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
+
+                EditText search = (EditText)findViewById(R.id.searchBox);
+                search.setText("");
             }
 
             @Override
@@ -235,8 +231,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             drawerLayout.closeDrawers();
         else if(v.getId() == R.id.searchBox)
         {
+            EditText searchText = (EditText)findViewById(R.id.searchBox);
+            String str = searchText.getText().toString();
+
+            Bundle args = new Bundle();
+            args.putString("text", str);
+
             drawerLayout.closeDrawers();
             SearchFragment newFrag = new SearchFragment();
+            newFrag.setArguments(args);
             android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             trans.addToBackStack(null);

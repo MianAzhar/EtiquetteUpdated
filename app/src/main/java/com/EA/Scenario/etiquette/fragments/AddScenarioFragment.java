@@ -277,7 +277,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                     FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
                     Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
                     parcelFileDescriptor.close();
-                    selectedImageUri = Bitmap.createScaledBitmap(image, 500, 300, true);
+                    selectedImageUri = Bitmap.createScaledBitmap(image, 600, 400, true);
                     //addDream.setImageBitmap(resized);
                     ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
                     chooseImage.setVisibility(View.GONE);
