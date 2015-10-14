@@ -329,7 +329,7 @@ public class NoChoiceFragment extends android.support.v4.app.Fragment implements
         else if(view.getId() == R.id.shareButton){
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "This is text of etiquette.");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, etiquette.Scenario_Description);
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share Via"));
         }

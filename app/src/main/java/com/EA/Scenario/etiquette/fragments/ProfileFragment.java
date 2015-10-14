@@ -168,6 +168,19 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
             }
             */
         }
+
+        SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("Picture", user.Picture);
+        editor.putString("userName", user.User_Name);
+        editor.putString("Name",user.Name);
+        editor.putString("phoneNumber", user.Mobile_Number);
+        editor.commit();
+        ImageView imgview = (ImageView) getActivity().findViewById(R.id.userpicture);
+        TextView tv = (TextView) getActivity().findViewById(R.id.unametv);
+        tv.setText(user.Name);
+        Picasso.with(getActivity()).load(user.Picture).into(imgview);
+        MainActivity.userName = user.User_Name;
     }
 
     public Bitmap StringToBitMap(String encodedString){

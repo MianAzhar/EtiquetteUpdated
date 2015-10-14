@@ -32,6 +32,7 @@
 
     </FrameLayout>
 
+<!--
     <GridView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -41,6 +42,7 @@
         android:numColumns="2"
         android:background="#ffff"
         android:verticalSpacing="5dp"/>
+-->
 
     <ListView
         android:layout_width="match_parent"
@@ -54,7 +56,7 @@
         android:background="#00000000"
         android:scrollbarStyle="outsideInset"/>
 
-<!--
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -62,7 +64,9 @@
         android:layout_weight="8.6"
         android:weightSum="2"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:id="@+id/items"
+        android:layout_marginLeft="10dp">
 
 
         <LinearLayout
@@ -72,18 +76,20 @@
             android:layout_weight="1"
             android:weightSum="2">
 
-            <ImageView
+            <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/travel"
+                android:background="@drawable/travel_background"
                 android:layout_marginLeft="5dp"
-                android:layout_weight="1"/>
-            <ImageView
+                android:layout_weight="1"
+                android:id="@+id/travelButton"/>
+            <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/road_and_traffic"
+                android:background="@drawable/road_background"
                 android:layout_marginLeft="5dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:id="@+id/roadButton"/>
 
         </LinearLayout>
         <LinearLayout
@@ -93,22 +99,24 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1">
 
-            <ImageView
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/toilet"
-                android:layout_marginLeft="3dp"/>
-            <ImageView
+                android:background="@drawable/toilet_background"
+                android:layout_marginLeft="3dp"
+                android:id="@+id/toiletButton"/>
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/other"
-                android:layout_marginLeft="5dp"/>
+                android:background="@drawable/other_background"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/otherButton"/>
 
         </LinearLayout>
 
 
     </LinearLayout>
-    -->
+
 
     <LinearLayout
         android:orientation="horizontal"

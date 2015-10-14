@@ -35,6 +35,7 @@ import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static ArrayList<Etiquette> etiquetteList;
     public static EtiquetteListAdapter adapter;
+
+    public static boolean askGps = true;
 
     public static GPSTracker gps;
 
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         //getSupportActionBar().hide();
+
 
         networkQueue = Volley.newRequestQueue(this);
 
@@ -129,11 +133,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
                 //Checking if the item is in checked state or not, if not make it in checked state
-                if (menuItem.isChecked())
-                    menuItem.setChecked(false);
-                else
-                    menuItem.setChecked(true);
 
+
+              //  if (menuItem.isChecked()) {
+                //    menuItem.setChecked(false);
+                //}
+                //else
+                //{
+                   // menuItem.setChecked(true);
+                //}
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
 
@@ -194,6 +202,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             trans.replace(R.id.fragment_container, newFrag, Constants.IntroductionFragmentTag).commit();
         }
         else {
+            pref = this.getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+            String picture = pref.getString("Picture", "");
+            String uname = pref.getString("Name" , "");
+            ImageView imgview = (ImageView) this.findViewById(R.id.userpicture);
+            TextView tv = (TextView) this.findViewById(R.id.unametv);
+            tv.setText(uname);
+            Picasso.with(this).load(picture).into(imgview);
+
+
             userName = user;
             PopularFragment newFrag = new PopularFragment();
             android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();

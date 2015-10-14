@@ -26,18 +26,20 @@
             android:padding="5dp" />
     </FrameLayout>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView7"
+    <com.EA.Scenario.etiquette.utils.RoundedImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/userpicture"
         android:layout_marginTop="40dp"
-        android:src="@drawable/userpic" />
+        android:src="@drawable/userpic"
+        android:scaleType="fitXY"/>
 
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView8"
-
+        android:id="@+id/unametv"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/username" />
 

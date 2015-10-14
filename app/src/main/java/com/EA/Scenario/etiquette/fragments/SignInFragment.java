@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,7 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
     TextView codeText;
     EditText phoneNumberField;
     ProgressDialog progressDialog;
+
     //String phoneNumber;
 
     public SignInFragment() {
@@ -141,6 +144,9 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
                             if(msg.equals("Signed in successfully. Phone number is verified"))
                             {
                                 String userName = jsonResponse.getJSONObject("data").getString("User_Name");
+                                String uName = jsonResponse.getJSONObject("data").getString("Name");
+
+
                                 if(userName.equals("null"))
                                 {
                                     SignUpFragment newFrag = new SignUpFragment();
@@ -154,12 +160,18 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
                                 else {
                                     SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = pref.edit();
-
+                                    String picture = jsonResponse.getJSONObject("data").getString("Picture");
+                                    editor.putString("Picture", picture);
                                     editor.putString("userName", userName);
+                                    editor.putString("Name",uName);
                                     editor.putString("phoneNumber", phoneNumber);
                                     editor.commit();
-
+                                    ImageView imgview = (ImageView) getActivity().findViewById(R.id.userpicture);
+                                    TextView tv = (TextView) getActivity().findViewById(R.id.unametv);
+                                    tv.setText(uName);
+                                    Picasso.with(getActivity()).load(picture).into(imgview);
                                     MainActivity.userName = userName;
+
 
                                     PopularFragment newFrag = new PopularFragment();
                                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();

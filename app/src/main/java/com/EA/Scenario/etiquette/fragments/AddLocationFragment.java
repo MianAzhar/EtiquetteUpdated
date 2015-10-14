@@ -5,15 +5,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
@@ -75,11 +78,33 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
 
         cityNameField = (EditText)getActivity().findViewById(R.id.cityName);
 
+        cityNameField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String name = cityNameField.getText().toString();
+                    if (name.length() < 1) {
+                        Toast.makeText(getActivity(), "Enter name of city", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    View v = getActivity().getCurrentFocus();
+                    if (v != null) {
+                        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+
+                    getCities(name);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         ImageButton search = (ImageButton)getActivity().findViewById(R.id.searchCities);
         search.setOnClickListener(this);
 
-
-
+        ImageButton tick = (ImageButton)getActivity().findViewById(R.id.tickCities);
+        tick.setOnClickListener(this);
 
         ListView lv = (ListView)getActivity().findViewById(R.id.listView2);
 
@@ -104,7 +129,7 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
     @Override
     public void onClick(View view)
     {
-        if(view.getId() == R.id.searchCities)
+        if(view.getId() == R.id.searchCities || view.getId() == R.id.tickCities)
         {
             String name = cityNameField.getText().toString();
             if(name.length() < 1)

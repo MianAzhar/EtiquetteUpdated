@@ -29,17 +29,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.User;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +64,7 @@ import java.util.Random;
 public class SignUpFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     Dialog dialog;
+    User user;
     String phoneNumber;
     EditText realName;
     EditText userName;
@@ -240,6 +245,7 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
 
     void checkUserName()
     {
+        user = new User();
         final String fName = realName.getText().toString();
         final String uName = userName.getText().toString();
 
@@ -255,18 +261,92 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
 
                             if(msg.equals("User name is accepted") || msg.equals("User name is verified"))
                             {
+                                StringRequest postRequest = new StringRequest(Request.Method.POST, "http://etiquette-app.azurewebsites.net/get-profile",
+                                        new Response.Listener<String>() {
+                                            @Override
+                                            public void onResponse(String response) {
+                                                try {
+                                                    progressDialog.dismiss();
+                                                    progressDialog = null;
+                                                    JSONObject jsonResponse = new JSONObject(response);
+                                                    String msg = jsonResponse.getString("status");
+
+                                                    if(msg.equals("success")) {
+                                                        Gson gson = new Gson();
+                                                        user = gson.fromJson(jsonResponse.getString("data"), User.class);
+
+                                                        SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor editor = pref.edit();
+                                                        String picture = jsonResponse.getJSONObject("data").getString("Picture");
+                                                        editor.putString("Picture", user.Picture);
+                                                        editor.putString("userName", user.User_Name);
+                                                        editor.putString("Name", user.Name);
+                                                        editor.putString("phoneNumber", user.Mobile_Number);
+                                                        editor.commit();
+                                                        ImageView imgview = (ImageView) getActivity().findViewById(R.id.userpicture);
+                                                        TextView tv = (TextView) getActivity().findViewById(R.id.unametv);
+                                                        tv.setText(user.User_Name);
+                                                        Picasso.with(getActivity()).load(user.Picture).into(imgview);
+                                                        MainActivity.userName = user.User_Name;
+
+                                                        PopularFragment newFrag = new PopularFragment();
+                                                        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                                        trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                                    }
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        },
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                error.printStackTrace();
+                                                progressDialog.dismiss();
+                                                progressDialog = null;
+                                                Toast.makeText(getActivity(), "Check internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                ) {
+                                    @Override
+                                    protected Map<String, String> getParams()
+                                    {
+                                        Map<String, String> params = new HashMap<>();
+                                        // the POST parameters:
+                                        params.put("language", "english");
+                                        params.put("Phone_Number", phoneNumber);
+
+                                        params.put("User_Name", userName.getText().toString());
+
+                                        return params;
+                                    }
+                                };
+
+                                RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                                postRequest.setRetryPolicy(policy);
+                                progressDialog = ProgressDialog.show(getActivity(), null, "Setting up", true, false);
+                                MainActivity.networkQueue.add(postRequest);
+
+                                /*
                                 SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("userName", uName);
                                 editor.putString("phoneNumber", phoneNumber);
+
+
                                 editor.commit();
 
                                 MainActivity.userName = uName;
+                                */
 
+                               /*
                                 PopularFragment newFrag = new PopularFragment();
                                 android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                 getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                */
                             }
                             else if(msg.equals("User name already exists"))
                             {

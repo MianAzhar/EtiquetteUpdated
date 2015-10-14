@@ -220,10 +220,15 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
         chooseImage.setOnClickListener(this);
 
-        ImageView userImage = (ImageView)getActivity().findViewById(R.id.userImage);
-        userImage.setOnClickListener(this);
-
         img = (ImageView)getActivity().findViewById(R.id.userImage);
+        img.setOnClickListener(this);
+
+        if(selectedImageUri != null)
+        {
+            chooseImage.setVisibility(View.GONE);
+            img.setVisibility(View.VISIBLE);
+            img.setImageBitmap(selectedImageUri);
+        }
 
         //ImageButton choice = (ImageButton)getActivity().findViewById(R.id.addChoice);
         //choice.setOnClickListener(this);
@@ -246,7 +251,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             // Can't get location.
             // GPS or network is not enabled.
             // Ask user to enable GPS/network in settings.
-            MainActivity.gps.showSettingsAlert();
+            if(MainActivity.askGps) {
+                MainActivity.gps.showSettingsAlert();
+                MainActivity.askGps = false;
+            }
         }
     }
 

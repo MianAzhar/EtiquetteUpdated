@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,7 +40,9 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
     //EtiquetteListAdapter listAdapter;
     //ArrayList<Etiquette> etiquetteArrayList;
 
-    GridView gridView;
+    //GridView gridView;
+
+    LinearLayout categories;
 
     public CategoriesFragment() {
         // Required empty public constructor
@@ -57,8 +60,24 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
 
+        categories = (LinearLayout)getActivity().findViewById(R.id.items);
+
+        ImageButton travel = (ImageButton)getActivity().findViewById(R.id.travelButton);
+        travel.setOnClickListener(this);
+
+        ImageButton toilet = (ImageButton)getActivity().findViewById(R.id.toiletButton);
+        toilet.setOnClickListener(this);
+
+        ImageButton road = (ImageButton)getActivity().findViewById(R.id.roadButton);
+        road.setOnClickListener(this);
+
+        ImageButton other = (ImageButton)getActivity().findViewById(R.id.otherButton);
+        other.setOnClickListener(this);
+
         ImageView menu = (ImageView)getActivity().findViewById(R.id.drawMenu);
         menu.setOnClickListener(this);
+
+
 
         list = (ListView)getActivity().findViewById(R.id.categoryList);
         //etiquetteArrayList = new ArrayList<>();
@@ -73,6 +92,7 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
         popular.setOnClickListener(this);
         cat.setOnClickListener(this);
 
+        /*
         gridView = (GridView)getActivity().findViewById(R.id.gridView);
 
         categoryList = new ArrayList<>();
@@ -84,9 +104,12 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
         //arrayList.add("Category 5");
         //arrayList.add("Category 6");
 
-        CategoriesAdapter adapter = new CategoriesAdapter(getActivity(), categoryList);
+        int[] res = new int[]{R.drawable.travel, R.drawable.toilet, R.drawable.road_and_traffic, R.drawable.other};
+
+        CategoriesAdapter adapter = new CategoriesAdapter(getActivity(), categoryList, res);
 
         gridView.setAdapter(adapter);
+
 
 
 
@@ -106,7 +129,7 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
             }
         });
 
-
+*/
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -168,8 +191,38 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
         {
             ((TextView)getActivity().findViewById(R.id.screenTitle)).setText("CATEGORIES");
             list.setVisibility(View.GONE);
-            gridView.setVisibility(View.VISIBLE);
+            categories.setVisibility(View.VISIBLE);
         }
+        else if(view.getId() == R.id.travelButton)
+        {
+            getPosts("travel");
+        }
+        else if(view.getId() == R.id.toiletButton)
+        {
+            getPosts("toilet");
+        }
+        else if(view.getId() == R.id.roadButton)
+        {
+            getPosts("ROAD & TRAFFIC");
+        }
+        else if(view.getId() == R.id.otherButton)
+        {
+            getPosts("other");
+        }
+    }
+
+    void getPosts(String cat)
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Category_Name", cat);
+
+        EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-category", list, MainActivity.adapter, MainActivity.etiquetteList, params);
+
+        ((TextView)getActivity().findViewById(R.id.screenTitle)).setText(cat);
+
+        categories.setVisibility(View.GONE);
+        list.setVisibility(View.VISIBLE);
     }
 
 }

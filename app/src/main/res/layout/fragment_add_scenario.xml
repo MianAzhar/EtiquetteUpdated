@@ -41,7 +41,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/tick"
             android:id="@+id/addScenarioButton"
-            android:padding="8dp"/>
+            android:padding="10dp" />
 
 
     </RelativeLayout>

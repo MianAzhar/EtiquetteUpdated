@@ -35,6 +35,10 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
     boolean peopleSelected = false;
     boolean placesSelected = false;
 
+    ImageButton tags;
+    ImageButton places;
+    ImageButton people;
+
     EditText searchText;
 
     ListView list;
@@ -74,13 +78,13 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
 
 
 
-        ImageButton tags = (ImageButton)getActivity().findViewById(R.id.tags);
+        tags = (ImageButton)getActivity().findViewById(R.id.tags);
         tags.setOnClickListener(this);
 
-        ImageButton places = (ImageButton)getActivity().findViewById(R.id.places);
+        places = (ImageButton)getActivity().findViewById(R.id.places);
         places.setOnClickListener(this);
 
-        ImageButton people = (ImageButton)getActivity().findViewById(R.id.people);
+        people = (ImageButton)getActivity().findViewById(R.id.people);
         people.setOnClickListener(this);
 
         ImageButton search = (ImageButton)getActivity().findViewById(R.id.searchIcon);
@@ -142,6 +146,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
 
             if(searchText.getText().toString().length() > 1)
             {
+                tags.setBackgroundResource(R.drawable.tags_hover);
+                places.setBackgroundResource(R.drawable.places);
+                people.setBackgroundResource(R.drawable.people);
                 params.put("Hash_Tags", "#" + searchText.getText().toString());
                 getEtiquette(Constants.TagScenario, params);
             }
@@ -157,6 +164,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
 
             if(searchText.getText().toString().length() > 1)
             {
+                tags.setBackgroundResource(R.drawable.tags);
+                places.setBackgroundResource(R.drawable.places_hover);
+                people.setBackgroundResource(R.drawable.people);
                 params.put("Location", searchText.getText().toString());
                 getEtiquette(Constants.PlaceScenario, params);
             }
@@ -172,6 +182,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
 
             if(searchText.getText().toString().length() > 1)
             {
+                tags.setBackgroundResource(R.drawable.tags);
+                places.setBackgroundResource(R.drawable.places);
+                people.setBackgroundResource(R.drawable.people_hover);
                 params.put("User_Name", searchText.getText().toString());
                 getEtiquette(Constants.UserScenario, params);
             }

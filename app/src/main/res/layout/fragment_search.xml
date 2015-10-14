@@ -96,7 +96,7 @@
             android:layout_height="match_parent"
             android:id="@+id/tags"
             android:layout_gravity="left|top"
-            android:background="@drawable/tags" />
+            android:background="@drawable/tags_hover" />
 
         <ImageButton
             android:layout_width="119dp"
