@@ -1,12 +1,16 @@
 package com.EA.Scenario.etiquette.fragments;
 
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -37,7 +41,9 @@ import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.adapters.CropingOptionAdapter;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.CropingOption;
 import com.EA.Scenario.etiquette.utils.CustomSeekbar;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.android.volley.DefaultRetryPolicy;
@@ -51,13 +57,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -71,6 +80,9 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     Bitmap selectedImageUri;
     ArrayList<View> choices;
     Dialog dialog;
+
+    private Uri mImageCaptureUri;
+    private File outPutFile = null;
 
     ImageView dot1;
     ImageView dot2;
@@ -104,6 +116,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
     public void onActivityCreated(Bundle bundle)
     {
         super.onActivityCreated(bundle);
+
+        outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
         captionTextField = (EditText)getActivity().findViewById(R.id.captionText);
         categoryField = (Spinner)getActivity().findViewById(R.id.category);
@@ -266,6 +280,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         }
         else if (requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO && resultCode == getActivity().RESULT_OK) {
             dialog.hide();
+            CropingIMG();
+            /*
             Uri uri = data.getData();
             selectedImageUri = (Bitmap) data.getExtras().get("data");
             ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
@@ -274,43 +290,167 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
             //String path = getPath(uri);
             //fun(path);
             img.setImageBitmap(selectedImageUri);
+            */
         }
-        else if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO) {
-                dialog.hide();
-                Uri uri = data.getData();
-                ParcelFileDescriptor parcelFileDescriptor;
-                try {
-                    parcelFileDescriptor = getActivity().getContentResolver().openFileDescriptor(uri, "r");
-                    FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                    Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                    parcelFileDescriptor.close();
-                    selectedImageUri = Bitmap.createScaledBitmap(image, 600, 400, true);
-                    //addDream.setImageBitmap(resized);
+        else if (requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO && resultCode == getActivity().RESULT_OK) {
+            dialog.hide();
+
+            mImageCaptureUri = data.getData();
+            System.out.println("Gallery Image URI : "+mImageCaptureUri);
+            CropingIMG();
+
+            /*
+            Uri uri = data.getData();
+            ParcelFileDescriptor parcelFileDescriptor;
+            try {
+                parcelFileDescriptor = getActivity().getContentResolver().openFileDescriptor(uri, "r");
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                parcelFileDescriptor.close();
+                selectedImageUri = Bitmap.createScaledBitmap(image, 600, 400, true);
+                //addDream.setImageBitmap(resized);
+                ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
+                chooseImage.setVisibility(View.GONE);
+                img.setVisibility(View.VISIBLE);
+                img.setImageBitmap(selectedImageUri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+            }
+            */
+            /*
+            Uri uri = data.getData();
+            ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
+            chooseImage.setVisibility(View.GONE);
+            img.setVisibility(View.VISIBLE);
+            String path = getPath(uri);
+            fun(path);
+            */
+            //img.setImageURI(selectedImageUri);
+            //chooseImage.setImageURI(selectedImageUri);
+        }
+        else if (requestCode == Constants.CROP_IMAGE_ADD_SCENARIO) {
+
+            try {
+                if(outPutFile.exists()){
+                    selectedImageUri = decodeFile(outPutFile);
+
                     ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
                     chooseImage.setVisibility(View.GONE);
                     img.setVisibility(View.VISIBLE);
                     img.setImageBitmap(selectedImageUri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                 }
-                /*
-                Uri uri = data.getData();
-                ImageButton chooseImage = (ImageButton)getActivity().findViewById(R.id.chooseImage);
-                chooseImage.setVisibility(View.GONE);
-                img.setVisibility(View.VISIBLE);
-                String path = getPath(uri);
-                fun(path);
-                */
-                //img.setImageURI(selectedImageUri);
-                //chooseImage.setImageURI(selectedImageUri);
+                else {
+                    Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+    }
+
+    private void CropingIMG() {
+
+        final ArrayList cropOptions = new ArrayList();
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+
+        List list = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+        int size = list.size();
+        if (size == 0) {
+            Toast.makeText(getActivity(), "Cann't find image croping app", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            intent.setData(mImageCaptureUri);
+            intent.putExtra("outputX", 512);
+            intent.putExtra("outputY", 256 + 128);
+            intent.putExtra("aspectX", 3);
+            intent.putExtra("aspectY", 2);
+            intent.putExtra("scale", true);
+
+            //TODO: don't use return-data tag because it's not return large image data and crash not given any message
+            //intent.putExtra("return-data", true);
+
+            //Create output file here
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outPutFile));
+
+            if (size == 1) {
+                Intent i   = new Intent(intent);
+                ResolveInfo res = (ResolveInfo)list.get(0);
+
+                i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
+                getActivity().startActivityForResult(i, Constants.CROP_IMAGE_ADD_SCENARIO);
+            } else {
+                for (Object res1 : list) {
+                    final CropingOption co = new CropingOption();
+                    ResolveInfo res = (ResolveInfo)res1;
+                    co.title  = getActivity().getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+                    co.icon  = getActivity().getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+                    co.appIntent= new Intent(intent);
+                    co.appIntent.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    cropOptions.add(co);
+                }
+
+                CropingOptionAdapter adapter = new CropingOptionAdapter(getActivity(), cropOptions);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose Croping App");
+                builder.setCancelable(false);
+                builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
+                    public void onClick( DialogInterface dialog, int item ) {
+                        getActivity().startActivityForResult(((CropingOption) cropOptions.get(item)).appIntent, Constants.CROP_IMAGE_ADD_SCENARIO);
+                    }
+                });
+
+                builder.setOnCancelListener( new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel( DialogInterface dialog ) {
+
+                        if (mImageCaptureUri != null ) {
+                            getActivity().getContentResolver().delete(mImageCaptureUri, null, null );
+                            mImageCaptureUri = null;
+                        }
+                    }
+                } );
+
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+    }
+
+    private Bitmap decodeFile(File f) {
+        try {
+            // decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // Find the correct scale value. It should be the power of 2.
+            final int REQUIRED_SIZE = 512;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            // decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+        }
+        return null;
     }
 
     @Override
@@ -355,6 +495,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         {
 
             Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+            mImageCaptureUri = Uri.fromFile(f);
+            picIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             getActivity().startActivityForResult(picIntent, Constants.TAKE_PICTURE_ADD_SCENARIO);
 
             //Toast.makeText(getActivity(), "Functionality not available", Toast.LENGTH_SHORT).show();

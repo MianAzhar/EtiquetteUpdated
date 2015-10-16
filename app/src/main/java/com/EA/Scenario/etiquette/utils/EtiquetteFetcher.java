@@ -63,7 +63,7 @@ public class EtiquetteFetcher {
                                 etiquetteListAdapter.clear();
                                 etiquetteArrayList.addAll(Arrays.asList(result));
                                 etiquetteListAdapter.notifyDataSetChanged();
-                                MainActivity.showDialog = true;
+                                MainActivity.showDialog = false;
                             }
                             else {
                                 etiquetteListAdapter.clear();

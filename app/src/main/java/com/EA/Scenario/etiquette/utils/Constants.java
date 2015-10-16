@@ -11,6 +11,9 @@ public class Constants {
     public static final int TAKE_PICTURE_EDIT_PROFILE = 1126;
     public static final int SELECT_PICTURE_EDIT_PROFILE = 1127;
     public static final int GET_LOCATION = 1128;
+    public static final int CROP_IMAGE_EDIT_PROFILE = 1129;
+    public static final int CROP_IMAGE_ADD_SCENARIO = 1130;
+    public static final int CROP_IMAGE_SIGN_UP = 1131;
 
     public static final String SignUpFragmentTag = "SignUpFragment";
     public static final String SignInFragmentTag = "SignInFragment";

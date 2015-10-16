@@ -1,12 +1,16 @@
 package com.EA.Scenario.etiquette.fragments;
 
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -34,7 +38,9 @@ import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.adapters.CropingOptionAdapter;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.CropingOption;
 import com.EA.Scenario.etiquette.utils.User;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -51,10 +57,13 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -70,6 +79,9 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     EditText userName;
     ProgressDialog progressDialog;
     Bitmap userImage = null;
+
+    private Uri mImageCaptureUri;
+    private File outPutFile = null;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -87,6 +99,8 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     public void onActivityCreated(Bundle bundle)
     {
         super.onActivityCreated(bundle);
+
+        outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
         Bundle args = getArguments();
         phoneNumber = args.getString("phoneNumber");
@@ -121,6 +135,8 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.TAKE_PICTURE_SIGN_UP && resultCode == FragmentActivity.RESULT_OK) {
             dialog.hide();
+            CropingIMG();
+            /*
             Uri selectedImageUri = data.getData();
             //Bitmap bmp = (Bitmap) data.getExtras().get("data");
             ImageView img = (ImageView) getActivity().findViewById(R.id.profilePic);
@@ -144,36 +160,158 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
             }
             img.setImageBitmap(thumbnail);
             userImage = thumbnail;
+            */
         }
-        else if (resultCode == FragmentActivity.RESULT_OK) {
-            if (requestCode == Constants.SELECT_PICTURE_SIGN_UP) {
-                dialog.hide();
-                Uri selectedImageUri = data.getData();
-                ParcelFileDescriptor parcelFileDescriptor;
-                try {
-                    parcelFileDescriptor = getActivity().getContentResolver().openFileDescriptor(selectedImageUri, "r");
-                    FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                    Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                    parcelFileDescriptor.close();
-                    Bitmap resized = Bitmap.createScaledBitmap(image, 500, 300, true);
-                    //addDream.setImageBitmap(resized);
+        else if (requestCode == Constants.SELECT_PICTURE_SIGN_UP && resultCode == FragmentActivity.RESULT_OK) {
+            dialog.hide();
+
+            mImageCaptureUri = data.getData();
+            System.out.println("Gallery Image URI : "+mImageCaptureUri);
+            CropingIMG();
+
+            /*
+            Uri selectedImageUri = data.getData();
+            ParcelFileDescriptor parcelFileDescriptor;
+            try {
+                parcelFileDescriptor = getActivity().getContentResolver().openFileDescriptor(selectedImageUri, "r");
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                parcelFileDescriptor.close();
+                Bitmap resized = Bitmap.createScaledBitmap(image, 500, 300, true);
+                //addDream.setImageBitmap(resized);
+                ImageView mImageView = (ImageView)getActivity().findViewById(R.id.profilePic);
+                mImageView.setImageBitmap(resized);
+                userImage = resized;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+            }
+            */
+            /*
+            Uri selectedImageUri = data.getData();
+            ImageView image = (ImageView)getActivity().findViewById(R.id.profilePic);
+            //image.setImageURI(selectedImageUri);
+            String path = getPath(selectedImageUri);
+            fun(path);
+            */
+
+        }
+        else if (requestCode == Constants.CROP_IMAGE_SIGN_UP) {
+
+            try {
+                if(outPutFile.exists()){
+                    userImage = decodeFile(outPutFile);
                     ImageView mImageView = (ImageView)getActivity().findViewById(R.id.profilePic);
-                    mImageView.setImageBitmap(resized);
-                    userImage = resized;
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                    mImageView.setImageBitmap(userImage);
                 }
-                /*
-                Uri selectedImageUri = data.getData();
-                ImageView image = (ImageView)getActivity().findViewById(R.id.profilePic);
-                //image.setImageURI(selectedImageUri);
-                String path = getPath(selectedImageUri);
-                fun(path);
-                */
+                else {
+                    Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+    }
+
+    private void CropingIMG() {
+
+        final ArrayList cropOptions = new ArrayList();
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+
+        List list = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+        int size = list.size();
+        if (size == 0) {
+            Toast.makeText(getActivity(), "Cann't find image croping app", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            intent.setData(mImageCaptureUri);
+            intent.putExtra("outputX", 512);
+            intent.putExtra("outputY", 256 + 128);
+            intent.putExtra("aspectX", 3);
+            intent.putExtra("aspectY", 2);
+            intent.putExtra("scale", true);
+
+            //TODO: don't use return-data tag because it's not return large image data and crash not given any message
+            //intent.putExtra("return-data", true);
+
+            //Create output file here
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outPutFile));
+
+            if (size == 1) {
+                Intent i   = new Intent(intent);
+                ResolveInfo res = (ResolveInfo)list.get(0);
+
+                i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
+                getActivity().startActivityForResult(i, Constants.CROP_IMAGE_SIGN_UP);
+            } else {
+                for (Object res1 : list) {
+                    final CropingOption co = new CropingOption();
+                    ResolveInfo res = (ResolveInfo)res1;
+                    co.title  = getActivity().getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+                    co.icon  = getActivity().getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+                    co.appIntent= new Intent(intent);
+                    co.appIntent.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    cropOptions.add(co);
+                }
+
+                CropingOptionAdapter adapter = new CropingOptionAdapter(getActivity(), cropOptions);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose Croping App");
+                builder.setCancelable(false);
+                builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
+                    public void onClick( DialogInterface dialog, int item ) {
+                        getActivity().startActivityForResult(((CropingOption) cropOptions.get(item)).appIntent, Constants.CROP_IMAGE_SIGN_UP);
+                    }
+                });
+
+                builder.setOnCancelListener( new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel( DialogInterface dialog ) {
+
+                        if (mImageCaptureUri != null ) {
+                            getActivity().getContentResolver().delete(mImageCaptureUri, null, null );
+                            mImageCaptureUri = null;
+                        }
+                    }
+                } );
+
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+    }
+
+    private Bitmap decodeFile(File f) {
+        try {
+            // decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // Find the correct scale value. It should be the power of 2.
+            final int REQUIRED_SIZE = 512;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            // decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+        }
+        return null;
     }
 
     @Override
@@ -228,8 +366,10 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
         else if(view.getId() == R.id.fromCamera)
         {
             Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            //File photo=new File(Environment.getExternalStorageDirectory(), "photo.jpg");
-            //picIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+
+            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+            mImageCaptureUri = Uri.fromFile(f);
+            picIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             getActivity().startActivityForResult(picIntent, Constants.TAKE_PICTURE_SIGN_UP);
 
             //Toast.makeText(getActivity(), "Functionality not available", Toast.LENGTH_SHORT).show();

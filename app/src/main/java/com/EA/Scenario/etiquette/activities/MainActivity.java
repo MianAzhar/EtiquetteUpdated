@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Constants.TAKE_PICTURE_SIGN_UP || requestCode == Constants.SELECT_PICTURE_SIGN_UP)
+        if(requestCode == Constants.TAKE_PICTURE_SIGN_UP || requestCode == Constants.SELECT_PICTURE_SIGN_UP || requestCode == Constants.CROP_IMAGE_SIGN_UP)
         {
             SignUpFragment frag = (SignUpFragment)getSupportFragmentManager().findFragmentByTag(Constants.SignUpFragmentTag);
             if(frag != null && frag.isVisible())
@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 frag.onActivityResult(requestCode, resultCode, data);
             }
         }
-        else if(requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO || requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO)
+        else if(requestCode == Constants.TAKE_PICTURE_ADD_SCENARIO || requestCode == Constants.SELECT_PICTURE_ADD_SCENARIO || requestCode == Constants.CROP_IMAGE_ADD_SCENARIO)
         {
             AddScenarioFragment frag = (AddScenarioFragment)getSupportFragmentManager().findFragmentByTag(Constants.AddScenarioFragmentTag);
             if(frag != null && frag.isVisible())
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 frag.onActivityResult(requestCode, resultCode, data);
             }
         }
-        else if(requestCode == Constants.TAKE_PICTURE_EDIT_PROFILE || requestCode == Constants.SELECT_PICTURE_EDIT_PROFILE)
+        else if(requestCode == Constants.TAKE_PICTURE_EDIT_PROFILE || requestCode == Constants.SELECT_PICTURE_EDIT_PROFILE || requestCode == Constants.CROP_IMAGE_EDIT_PROFILE)
         {
             EditProfileFragment frag = (EditProfileFragment)getSupportFragmentManager().findFragmentByTag(Constants.EditProfileFragmentTag);
             if(frag != null && frag.isVisible())
