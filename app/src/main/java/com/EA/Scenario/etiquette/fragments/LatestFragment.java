@@ -45,6 +45,9 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
     {
         super.onActivityCreated(bundle);
 
+        DrawerLayout drawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
         ImageView menu = (ImageView)getActivity().findViewById(R.id.drawMenu);
         menu.setOnClickListener(this);
 
@@ -61,6 +64,7 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
         Map<String, String> params = new HashMap<>();
         // the POST parameters:
         params.put("language", "english");
+        params.put("is_Popular", "false");
 
         EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
         etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, MainActivity.adapter, MainActivity.etiquetteList, params);
@@ -88,12 +92,25 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
                         }
                         else
                         {
-                            ChoiceFragment newFrag = new ChoiceFragment();
-                            newFrag.setArguments(args);
-                            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                            //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            trans.addToBackStack(null);
-                            trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                            if(MainActivity.etiquetteList.get(i).Scenario_Option_1.length() > 0) {
+                                ChoiceFragment newFrag = new ChoiceFragment();
+                                newFrag.setArguments(args);
+                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                trans.addToBackStack(null);
+                                trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                            }
+                            else
+                            {
+                                NoChoiceFragment newFrag = new NoChoiceFragment();
+                                newFrag.setArguments(args);
+                                android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                                //getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                trans.addToBackStack(null);
+                                //trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                                //trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
+                            }
                         }
                     }
                 });

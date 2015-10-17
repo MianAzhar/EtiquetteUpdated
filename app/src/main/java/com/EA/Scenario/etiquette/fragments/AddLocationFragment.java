@@ -1,8 +1,8 @@
 package com.EA.Scenario.etiquette.fragments;
 
-
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.KeyEvent;
@@ -15,20 +15,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
-import com.EA.Scenario.etiquette.services.GPSTracker;
-import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.TransparentProgressDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +47,7 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
     public static double x2;
     public static double y1;
     public static double y2;
-    ProgressDialog progress;
+    TransparentProgressDialog progress;
 
     public static String selectedCity = null;
 
@@ -103,6 +104,9 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
         ImageButton search = (ImageButton)getActivity().findViewById(R.id.searchCities);
         search.setOnClickListener(this);
 
+        ImageView back = (ImageView)getActivity().findViewById(R.id.locationBack);
+        back.setOnClickListener(this);
+
         ImageButton tick = (ImageButton)getActivity().findViewById(R.id.tickCities);
         tick.setOnClickListener(this);
 
@@ -116,6 +120,22 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
         });
 
 
+
+        if(MainActivity.location != null)
+        {
+            longitude = MainActivity.location.getLongitude();
+            latitude = MainActivity.location.getLatitude();
+            getNearByCities();
+        }
+        else {
+            MainActivity.location = LocationServices.FusedLocationApi.getLastLocation(MainActivity.mGoogleApiClient);
+            if(MainActivity.location != null)
+            {
+                longitude = MainActivity.location.getLongitude();
+                latitude = MainActivity.location.getLatitude();
+                getNearByCities();
+            }
+        }
     }
 
     void returnResult(String name)
@@ -144,6 +164,10 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
             }
 
             getCities(name);
+        }
+        else if(view.getId() == R.id.locationBack)
+        {
+            getActivity().getSupportFragmentManager().popBackStack();
         }
     }
 
@@ -189,8 +213,9 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
             }
         });
 
-        progress = ProgressDialog.show(getActivity(), null,
-                "Receiving Data", true);
+        //progress = ProgressDialog.show(getActivity(), null, "Receiving Data", true);
+        progress = new TransparentProgressDialog(getActivity(), R.drawable.loading3);
+        progress.show();
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(stringRequest);
     }
@@ -255,8 +280,9 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
             }
         });
 
-        progress = ProgressDialog.show(getActivity(), null,
-                "Getting cities", true);
+        //progress = ProgressDialog.show(getActivity(), null, "Getting cities", true);
+        progress = new TransparentProgressDialog(getActivity(), com.EA.Scenario.etiquette.R.drawable.loading3);
+        progress.show();
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(stringRequest);
     }
@@ -284,8 +310,6 @@ public class AddLocationFragment extends android.support.v4.app.Fragment impleme
 
         ListView lv = (ListView)getActivity().findViewById(R.id.listView2);
         lv.setAdapter(ad);
-
-        return;
     }
 
 

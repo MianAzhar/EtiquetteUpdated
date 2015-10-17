@@ -173,10 +173,10 @@ public class SignInFragment extends android.support.v4.app.Fragment implements V
                                     MainActivity.userName = userName;
 
 
-                                    PopularFragment newFrag = new PopularFragment();
+                                    LatestFragment newFrag = new LatestFragment();
                                     android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                     getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                                    trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                    trans.replace(R.id.fragment_container, newFrag, Constants.LatestFragmentTag).commit();
                                 }
                             }
                             else if(msg.equals("Signed in successfully. After adding phone number"))

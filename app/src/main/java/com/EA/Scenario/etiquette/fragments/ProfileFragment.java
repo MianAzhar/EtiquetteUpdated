@@ -25,6 +25,7 @@ import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.RoundedImageView;
+import com.EA.Scenario.etiquette.utils.TransparentProgressDialog;
 import com.EA.Scenario.etiquette.utils.User;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -47,7 +48,7 @@ import java.util.Map;
  */
 public class ProfileFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    ProgressDialog progressDialog;
+    TransparentProgressDialog progressDialog;
     User user;
 
     public ProfileFragment() {
@@ -127,7 +128,10 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        progressDialog = ProgressDialog.show(getActivity(), null, "Getting Profile", true, false);
+        progressDialog = new TransparentProgressDialog(getActivity(), R.drawable.loading3);
+        progressDialog.show();
+
+        //progressDialog = ProgressDialog.show(getActivity(), null, "Getting Profile", true, false);
         MainActivity.networkQueue.add(postRequest);
 
         TextView userName = (TextView)getActivity().findViewById(R.id.userNameText);

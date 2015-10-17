@@ -26,7 +26,9 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:allowTaskReparenting="false"
+            android:alwaysRetainTaskState="true">
 
         </activity>
         <activity

@@ -46,6 +46,7 @@ import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.CropingOption;
 import com.EA.Scenario.etiquette.utils.CustomSeekbar;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.EA.Scenario.etiquette.utils.TransparentProgressDialog;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -98,7 +99,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
     String cityName = null;
 
-    ProgressDialog progressDialog;
+    TransparentProgressDialog progressDialog;
 
     public AddScenarioFragment() {
         // Required empty public constructor
@@ -257,6 +258,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
 
         choices.add(row);
 
+        /*
         // Check if GPS enabled
         if (MainActivity.gps.canGetLocation()) {
             MainActivity.location = MainActivity.gps.getLocation();
@@ -270,6 +272,7 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                 MainActivity.askGps = false;
             }
         }
+        */
     }
 
     @Override
@@ -505,10 +508,8 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         }
         else if(view.getId() == R.id.fromGallery)
         {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            getActivity().startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.SELECT_PICTURE_ADD_SCENARIO);
+            Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            getActivity().startActivityForResult(i, Constants.SELECT_PICTURE_ADD_SCENARIO);
         }
     }
 
@@ -579,10 +580,10 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                             if(msg.equals("success"))
                             {
                                 Toast.makeText(getActivity(), "Scenario Added", Toast.LENGTH_SHORT).show();
-                                PopularFragment newFrag = new PopularFragment();
+                                LatestFragment newFrag = new LatestFragment();
                                 android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                 getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                                trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                trans.replace(R.id.fragment_container, newFrag, Constants.LatestFragmentTag).commit();
                             }
                             else {
                                 Toast.makeText(getActivity(), "Status fail", Toast.LENGTH_SHORT).show();
@@ -612,7 +613,12 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
                 params.put("User_Name", MainActivity.userName);
                 params.put("Scenario_Description", caption);
                 params.put("Scenario_Category", category);
-                params.put("Scenario_Current_Location", "" + MainActivity.gps.getLatitude() + ", " + MainActivity.gps.getLongitude());
+
+                if(MainActivity.location != null)
+                    params.put("Scenario_Current_Location", "" + MainActivity.location.getLatitude() + ", " + MainActivity.location.getLatitude());
+                else
+                    params.put("Scenario_Current_Location", "" + "0" + ", " + "0");
+
                 params.put("Scenario_Entry_Time", Long.toString(System.currentTimeMillis()));
                 params.put("Scenario_Level", Integer.toString(meterBar.getProgress() - 2));
 
@@ -663,7 +669,9 @@ public class AddScenarioFragment extends android.support.v4.app.Fragment impleme
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        progressDialog = ProgressDialog.show(getActivity(), null, "Adding Scenario", true, false);
+        progressDialog = new TransparentProgressDialog(getActivity(), R.drawable.loading3);
+        progressDialog.show();
+        //progressDialog = ProgressDialog.show(getActivity(), null, "Adding Scenario", true, false);
         MainActivity.networkQueue.add(postRequest);
     }
 

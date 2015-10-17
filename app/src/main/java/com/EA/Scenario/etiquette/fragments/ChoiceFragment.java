@@ -23,6 +23,7 @@ import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.EA.Scenario.etiquette.utils.RoundedImageView;
+import com.EA.Scenario.etiquette.utils.TransparentProgressDialog;
 import com.EA.Scenario.etiquette.utils.UpdateCounter;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -58,7 +59,7 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
 
     ArrayList<View> choicesView;
 
-    ProgressDialog progressDialog;
+    TransparentProgressDialog progressDialog;
 
     public ChoiceFragment() {
         // Required empty public constructor
@@ -235,13 +236,25 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
                     }
                     else
                     {
-                        ChoiceFragment newFrag = new ChoiceFragment();
-                        newFrag.setArguments(args);
-                        android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
-                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        //trans.addToBackStack(null);
-                        trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
-                        trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                        if(MainActivity.etiquetteList.get(index+1).Scenario_Option_1.length() > 0) {
+                            ChoiceFragment newFrag = new ChoiceFragment();
+                            newFrag.setArguments(args);
+                            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            //trans.addToBackStack(null);
+                            trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                            trans.replace(R.id.fragment_container, newFrag, Constants.ChoiceFragmentTag).commit();
+                        }
+                        else
+                        {
+                            NoChoiceFragment newFrag = new NoChoiceFragment();
+                            newFrag.setArguments(args);
+                            android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            //trans.addToBackStack(null);
+                            trans.setCustomAnimations(R.anim.abc_slide_out_top, R.anim.abc_slide_in_bottom);
+                            trans.replace(R.id.fragment_container, newFrag, Constants.NoChoiceFragmentTag).commit();
+                        }
                     }
                 }
                 else {
@@ -389,7 +402,9 @@ public class ChoiceFragment extends android.support.v4.app.Fragment implements V
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        progressDialog = ProgressDialog.show(getActivity(), null, "Fetching data", true, false);
+        progressDialog = new TransparentProgressDialog(getActivity(), R.drawable.loading3);
+        progressDialog.show();
+        //progressDialog = ProgressDialog.show(getActivity(), null, "Fetching data", true, false);
 
         MainActivity.networkQueue.add(postRequest);
     }

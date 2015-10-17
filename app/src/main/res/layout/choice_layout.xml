@@ -11,7 +11,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:background="#00000000"
-        android:textSize="15dp"
+        android:textSize="13sp"
         android:id="@+id/choiceText"
         android:imeOptions="actionDone"
         android:inputType="text"/>

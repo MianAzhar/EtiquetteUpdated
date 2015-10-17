@@ -25,6 +25,7 @@ import com.EA.Scenario.etiquette.adapters.EtiquetteListAdapter;
 import com.EA.Scenario.etiquette.fragments.AddScenarioFragment;
 import com.EA.Scenario.etiquette.fragments.EditProfileFragment;
 import com.EA.Scenario.etiquette.fragments.IntroductionFragment;
+import com.EA.Scenario.etiquette.fragments.LatestFragment;
 import com.EA.Scenario.etiquette.fragments.PopularFragment;
 import com.EA.Scenario.etiquette.fragments.ProfileFragment;
 import com.EA.Scenario.etiquette.fragments.SearchFragment;
@@ -35,11 +36,18 @@ import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     public static ArrayList<Etiquette> etiquetteList;
     public static EtiquetteListAdapter adapter;
@@ -65,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Handler h1;
     Runnable r1;
 
+    public static GoogleApiClient mGoogleApiClient;
+
+    public static LocationRequest mLocationRequest;
+
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -77,7 +89,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         networkQueue = Volley.newRequestQueue(this);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(30 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+
         gps = new GPSTracker(this);
+/*
+        if (MainActivity.gps.canGetLocation()) {
+            //MainActivity.location = MainActivity.gps.getLocation();
+
+        } else {
+            // Can't get location.
+            // GPS or network is not enabled.
+            // Ask user to enable GPS/network in settings.
+            if(MainActivity.askGps) {
+                MainActivity.gps.showSettingsAlert();
+                MainActivity.askGps = false;
+            }
+        }
+*/
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         MainActivity.etiquetteList = new ArrayList<>();
 
@@ -212,10 +250,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             userName = user;
-            PopularFragment newFrag = new PopularFragment();
+            LatestFragment newFrag = new LatestFragment();
             android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.LatestFragmentTag).commit();
         }
     }
 
@@ -352,10 +390,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if((choiceFragment != null && choiceFragment.isVisible())
                 || (noChoiceFragment != null && noChoiceFragment.isVisible())){
-            PopularFragment newFrag = new PopularFragment();
+            LatestFragment newFrag = new LatestFragment();
             android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+            trans.replace(R.id.fragment_container, newFrag, Constants.LatestFragmentTag).commit();
         }
         else {
             super.onBackPressed();
@@ -363,4 +401,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        else {
+            //handleNewLocation(location);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location loc) {
+        location = loc;
+    }
 }

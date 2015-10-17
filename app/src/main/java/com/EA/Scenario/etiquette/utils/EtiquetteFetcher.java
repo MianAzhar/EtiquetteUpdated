@@ -5,6 +5,7 @@ import android.content.Context;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.adapters.EtiquetteListAdapter;
 import com.android.volley.DefaultRetryPolicy;
@@ -35,7 +36,7 @@ public class EtiquetteFetcher {
     ArrayList<Etiquette> etiquetteArrayList;
     Map<String, String> parameters;
 
-    ProgressDialog progressDialog;
+    TransparentProgressDialog progressDialog;
 
     public void getEtiquette(final Context context, String url, ListView lv, EtiquetteListAdapter ad, ArrayList<Etiquette> list, Map<String, String> params)
     {
@@ -97,8 +98,10 @@ public class EtiquetteFetcher {
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        if(MainActivity.showDialog)
-            progressDialog = ProgressDialog.show(context, null, "Fetching data", true, false);
+        if(MainActivity.showDialog) {
+            progressDialog = new TransparentProgressDialog(context, R.drawable.loading3);
+            progressDialog.show();
+        }
 
         MainActivity.networkQueue.add(postRequest);
     }

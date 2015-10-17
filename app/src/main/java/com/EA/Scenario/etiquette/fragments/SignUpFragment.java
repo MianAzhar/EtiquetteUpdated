@@ -41,6 +41,7 @@ import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.adapters.CropingOptionAdapter;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.CropingOption;
+import com.EA.Scenario.etiquette.utils.TransparentProgressDialog;
 import com.EA.Scenario.etiquette.utils.User;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -77,7 +78,7 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
     String phoneNumber;
     EditText realName;
     EditText userName;
-    ProgressDialog progressDialog;
+    TransparentProgressDialog progressDialog;
     Bitmap userImage = null;
 
     private Uri mImageCaptureUri;
@@ -376,10 +377,8 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
         }
         else if(view.getId() == R.id.fromGallery)
         {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            getActivity().startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.SELECT_PICTURE_SIGN_UP);
+            Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            getActivity().startActivityForResult(i, Constants.SELECT_PICTURE_SIGN_UP);
         }
     }
 
@@ -429,10 +428,10 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
                                                         Picasso.with(getActivity()).load(user.Picture).into(imgview);
                                                         MainActivity.userName = user.User_Name;
 
-                                                        PopularFragment newFrag = new PopularFragment();
+                                                        LatestFragment newFrag = new LatestFragment();
                                                         android.support.v4.app.FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
                                                         getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                                                        trans.replace(R.id.fragment_container, newFrag, Constants.PopularFragmentTag).commit();
+                                                        trans.replace(R.id.fragment_container, newFrag, Constants.LatestFragmentTag).commit();
                                                     }
 
                                                 } catch (JSONException e) {
@@ -466,7 +465,9 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
 
                                 RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
                                 postRequest.setRetryPolicy(policy);
-                                progressDialog = ProgressDialog.show(getActivity(), null, "Setting up", true, false);
+                                //progressDialog = ProgressDialog.show(getActivity(), null, "Setting up", true, false);
+                                progressDialog = new TransparentProgressDialog(getActivity(), R.drawable.loading3);
+                                progressDialog.show();
                                 MainActivity.networkQueue.add(postRequest);
 
                                 /*
@@ -534,7 +535,9 @@ public class SignUpFragment extends android.support.v4.app.Fragment implements V
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        progressDialog = ProgressDialog.show(getActivity(), null, "Checking UserName", true, false);
+        //progressDialog = ProgressDialog.show(getActivity(), null, "Checking UserName", true, false);
+        progressDialog = new TransparentProgressDialog(getActivity(), R.drawable.loading3);
+        progressDialog.show();
         MainActivity.networkQueue.add(postRequest);
     }
 
