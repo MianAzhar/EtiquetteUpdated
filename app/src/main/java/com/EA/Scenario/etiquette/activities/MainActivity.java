@@ -295,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStop();
         showDialog = true;
-        askGps = true;
         networkQueue.cancelAll(new RequestQueue.RequestFilter() {
             @Override
             public boolean apply(Request<?> request) {

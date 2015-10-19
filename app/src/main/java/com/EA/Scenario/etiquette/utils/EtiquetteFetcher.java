@@ -66,8 +66,8 @@ public class EtiquetteFetcher {
                                 // GPS or network is not enabled.
                                 // Ask user to enable GPS/network in settings.
                                 if(MainActivity.askGps) {
-                                    MainActivity.gps.showSettingsAlert();
                                     MainActivity.askGps = false;
+                                    MainActivity.gps.showSettingsAlert();
                                 }
                             }
 
