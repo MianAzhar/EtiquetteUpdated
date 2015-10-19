@@ -67,7 +67,7 @@ public class LatestFragment extends android.support.v4.app.Fragment implements V
         params.put("is_Popular", "false");
 
         EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
-        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, MainActivity.adapter, MainActivity.etiquetteList, params);
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, MainActivity.adapter, MainActivity.etiquetteList, params, MainActivity.showDialog);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

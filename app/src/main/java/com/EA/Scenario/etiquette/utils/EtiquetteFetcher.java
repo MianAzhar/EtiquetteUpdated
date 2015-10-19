@@ -38,22 +38,39 @@ public class EtiquetteFetcher {
 
     TransparentProgressDialog progressDialog;
 
-    public void getEtiquette(final Context context, String url, ListView lv, EtiquetteListAdapter ad, ArrayList<Etiquette> list, Map<String, String> params)
+    boolean showDialog;
+
+    public void getEtiquette(final Context context, String url, ListView lv, EtiquetteListAdapter ad, ArrayList<Etiquette> list, Map<String, String> params, boolean dialog)
     {
         listView = lv;
         etiquetteListAdapter = ad;
         etiquetteArrayList = list;
         parameters = params;
+        showDialog = dialog;
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            if(MainActivity.showDialog) {
+                            if(showDialog) {
                                 progressDialog.dismiss();
                                 progressDialog = null;
                             }
+
+                            if (MainActivity.gps.canGetLocation()) {
+                                //MainActivity.location = MainActivity.gps.getLocation();
+
+                            } else {
+                                // Can't get location.
+                                // GPS or network is not enabled.
+                                // Ask user to enable GPS/network in settings.
+                                if(MainActivity.askGps) {
+                                    MainActivity.gps.showSettingsAlert();
+                                    MainActivity.askGps = false;
+                                }
+                            }
+
                             JSONObject jsonResponse = new JSONObject(response);
                             String msg = jsonResponse.getString("status");
 
@@ -71,7 +88,8 @@ public class EtiquetteFetcher {
                                 etiquetteListAdapter.notifyDataSetChanged();
                             }
 
-                        } catch (JSONException e) {
+                        }
+                        catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -80,9 +98,21 @@ public class EtiquetteFetcher {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        if(MainActivity.showDialog) {
+                        if(showDialog) {
                             progressDialog.dismiss();
                             progressDialog = null;
+                        }
+                        if (MainActivity.gps.canGetLocation()) {
+                            //MainActivity.location = MainActivity.gps.getLocation();
+
+                        } else {
+                            // Can't get location.
+                            // GPS or network is not enabled.
+                            // Ask user to enable GPS/network in settings.
+                            if(MainActivity.askGps) {
+                                MainActivity.gps.showSettingsAlert();
+                                MainActivity.askGps = false;
+                            }
                         }
                         Toast.makeText(context, "Check internet connection", Toast.LENGTH_SHORT).show();
                     }
@@ -98,7 +128,7 @@ public class EtiquetteFetcher {
         RetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
 
-        if(MainActivity.showDialog) {
+        if(showDialog) {
             progressDialog = new TransparentProgressDialog(context, R.drawable.loading3);
             progressDialog.show();
         }

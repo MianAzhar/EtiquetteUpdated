@@ -11,9 +11,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import com.EA.Scenario.etiquette.fragments.SignUpFragment;
 import com.EA.Scenario.etiquette.services.GPSTracker;
 import com.EA.Scenario.etiquette.utils.Constants;
 import com.EA.Scenario.etiquette.utils.Etiquette;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
@@ -73,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Handler h1;
     Runnable r1;
 
+    EditText search;
+
     public static GoogleApiClient mGoogleApiClient;
 
     public static LocationRequest mLocationRequest;
@@ -101,20 +106,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         gps = new GPSTracker(this);
-/*
-        if (MainActivity.gps.canGetLocation()) {
-            //MainActivity.location = MainActivity.gps.getLocation();
 
-        } else {
-            // Can't get location.
-            // GPS or network is not enabled.
-            // Ask user to enable GPS/network in settings.
-            if(MainActivity.askGps) {
-                MainActivity.gps.showSettingsAlert();
-                MainActivity.askGps = false;
-            }
-        }
-*/
+
+
         location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         MainActivity.etiquetteList = new ArrayList<>();
@@ -128,8 +122,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
-        EditText search = (EditText)findViewById(R.id.searchBox);
+        search = (EditText)findViewById(R.id.searchBox);
         search.setOnClickListener(this);
+
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String name = search.getText().toString();
+                    if (name.length() < 1) {
+                        Toast.makeText(MainActivity.this, "Enter something", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    View v = getCurrentFocus();
+                    if (v != null) {
+                        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+
+                    Bundle args = new Bundle();
+                    args.putString("text", name);
+
+                    drawerLayout.closeDrawers();
+                    SearchFragment newFrag = new SearchFragment();
+                    newFrag.setArguments(args);
+                    android.support.v4.app.FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+                    //getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    trans.addToBackStack(null);
+                    trans.replace(R.id.fragment_container, newFrag, Constants.SearchFragmentTag).commit();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         TextView signout = (TextView)findViewById(R.id.sign_out_button);
         signout.setOnClickListener(this);
@@ -265,6 +290,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onStop()
+    {
+        super.onStop();
+        showDialog = true;
+        askGps = true;
+        networkQueue.cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return true;
+            }
+        });
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -288,6 +327,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             EditText searchText = (EditText)findViewById(R.id.searchBox);
             String str = searchText.getText().toString();
+
+            if(str.length() < 1)
+            {
+                Toast.makeText(this, "Enter something", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             Bundle args = new Bundle();
             args.putString("text", str);

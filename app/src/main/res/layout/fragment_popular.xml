@@ -53,25 +53,28 @@
         android:layout_weight="0.6">
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/popularButton_popular"
             android:layout_gravity="bottom"
-            android:background="@drawable/popular_selected"/>
+            android:background="@drawable/popular_selected"
+            android:layout_weight="1"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/latestButton_popular"
             android:layout_gravity="bottom"
-            android:background="@drawable/latest"/>
+            android:background="@drawable/latest"
+            android:layout_weight="1"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/categoryButton_popular"
             android:layout_gravity="bottom"
-            android:background="@drawable/category"/>
+            android:background="@drawable/category"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

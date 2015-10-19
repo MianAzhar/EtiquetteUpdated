@@ -36,6 +36,11 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
 
     ArrayList<String> categoryList;
 
+    public static ArrayList<Etiquette> etiquetteList;
+    public static EtiquetteListAdapter adapter = null;
+
+    public static boolean showDialog = true;
+
     ListView list;
     //EtiquetteListAdapter listAdapter;
     //ArrayList<Etiquette> etiquetteArrayList;
@@ -62,6 +67,12 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
 
         categories = (LinearLayout)getActivity().findViewById(R.id.items);
 
+        if(adapter == null) {
+            etiquetteList = new ArrayList<>();
+
+            adapter = new EtiquetteListAdapter(getActivity(), etiquetteList);
+        }
+
         ImageButton travel = (ImageButton)getActivity().findViewById(R.id.travelButton);
         travel.setOnClickListener(this);
 
@@ -82,7 +93,7 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
         list = (ListView)getActivity().findViewById(R.id.categoryList);
         //etiquetteArrayList = new ArrayList<>();
         //listAdapter = new EtiquetteListAdapter(getActivity(), etiquetteArrayList);
-        list.setAdapter(MainActivity.adapter);
+        list.setAdapter(adapter);
 
         ImageButton latest = (ImageButton) getActivity().findViewById(R.id.latestButton_categories);
         ImageButton popular = (ImageButton) getActivity().findViewById(R.id.popularButton_categories);
@@ -230,7 +241,9 @@ public class CategoriesFragment extends android.support.v4.app.Fragment implemen
         params.put("Category_Name", cat);
 
         EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
-        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-category", list, MainActivity.adapter, MainActivity.etiquetteList, params);
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios-of-category", list, adapter, etiquetteList, params, showDialog);
+
+        showDialog = false;
 
         ((TextView)getActivity().findViewById(R.id.screenTitle)).setText(cat);
 

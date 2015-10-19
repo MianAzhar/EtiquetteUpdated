@@ -3,6 +3,7 @@
     android:layout_height="wrap_content"
     tools:context="com.EA.Scenario.etiquette.fragments.IntroSliderFragment"
     android:orientation="vertical"
+    android:layout_gravity="center"
     android:gravity="center">
 
     <ImageView

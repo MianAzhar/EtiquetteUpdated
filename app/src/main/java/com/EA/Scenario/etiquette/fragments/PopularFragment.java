@@ -16,13 +16,29 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
+import com.EA.Scenario.etiquette.adapters.EtiquetteListAdapter;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
+import com.EA.Scenario.etiquette.utils.TransparentProgressDialog;
 import com.EA.Scenario.etiquette.utils.UpdateCounter;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +47,10 @@ import java.util.Map;
  */
 public class PopularFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
+    public static ArrayList<Etiquette> etiquetteList1;
+    public static EtiquetteListAdapter adapter1 = null;
+
+    public static boolean showDialog = true;
 
     public PopularFragment() {
         // Required empty public constructor
@@ -48,6 +68,12 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
     {
         super.onActivityCreated(bundle);
 
+        if(adapter1 == null) {
+            etiquetteList1 = new ArrayList<>();
+
+            adapter1 = new EtiquetteListAdapter(getActivity(), etiquetteList1);
+        }
+
         DrawerLayout drawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
@@ -62,7 +88,7 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
 
         final ListView list = (ListView)getActivity().findViewById(R.id.popularList);
 
-        list.setAdapter(MainActivity.adapter);
+        list.setAdapter(adapter1);
 
         /*
         SharedPreferences pref = getActivity().getSharedPreferences(Constants.EtiquettePreferences, Context.MODE_PRIVATE);
@@ -84,7 +110,9 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
         params.put("is_Popular", "true");
 
         EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
-        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, MainActivity.adapter, MainActivity.etiquetteList, params);
+        etiquetteFetcher.getEtiquette(getActivity(), "http://etiquette-app.azurewebsites.net/get-all-scenarios", list, adapter1, etiquetteList1, params, showDialog);
+
+        showDialog = false;
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -156,6 +184,5 @@ public class PopularFragment extends android.support.v4.app.Fragment implements 
             d.openDrawer(navigationView);
         }
     }
-
 
 }

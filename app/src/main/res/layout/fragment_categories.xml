@@ -28,7 +28,8 @@
             android:textSize="20sp"
             android:layout_gravity="center"
             android:text="@string/catagories"
-            android:id="@+id/screenTitle"/>
+            android:id="@+id/screenTitle"
+            />
 
     </FrameLayout>
 
@@ -69,7 +70,8 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:id="@+id/items"
-        android:layout_marginLeft="10dp">
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal">
 
 
         <LinearLayout
@@ -83,7 +85,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/travel_background"
-                android:layout_marginLeft="5dp"
+
                 android:layout_weight="1"
                 android:id="@+id/travelButton"/>
             <ImageButton
@@ -100,20 +102,23 @@
             android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_marginTop="10dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:weightSum="2">
 
             <ImageButton
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/toilet_background"
-                android:layout_marginLeft="3dp"
-                android:id="@+id/toiletButton"/>
+
+                android:id="@+id/toiletButton"
+                android:layout_weight="1"/>
             <ImageButton
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/other_background"
                 android:layout_marginLeft="5dp"
-                android:id="@+id/otherButton"/>
+                android:id="@+id/otherButton"
+                android:layout_weight="1"/>
 
         </LinearLayout>
 
@@ -128,25 +133,28 @@
         android:layout_weight="0.6">
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/popularButton_categories"
             android:layout_gravity="bottom"
-            android:background="@drawable/popular"/>
+            android:background="@drawable/popular"
+            android:layout_weight="1"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/latestButton_categories"
             android:layout_gravity="bottom"
-            android:background="@drawable/latest"/>
+            android:background="@drawable/latest"
+            android:layout_weight="1"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/categoryButton_categories"
             android:layout_gravity="bottom"
-            android:background="@drawable/category_selected"/>
+            android:background="@drawable/category_selected"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

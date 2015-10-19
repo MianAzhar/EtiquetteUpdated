@@ -6,20 +6,25 @@ import android.content.Context;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.EA.Scenario.etiquette.R;
 import com.EA.Scenario.etiquette.activities.MainActivity;
 import com.EA.Scenario.etiquette.adapters.DiscoverListAdapter;
+import com.EA.Scenario.etiquette.adapters.EtiquetteListAdapter;
 import com.EA.Scenario.etiquette.utils.Constants;
+import com.EA.Scenario.etiquette.utils.Etiquette;
 import com.EA.Scenario.etiquette.utils.EtiquetteFetcher;
 
 import java.util.ArrayList;
@@ -35,6 +40,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
     boolean peopleSelected = false;
     boolean placesSelected = false;
 
+    public static ArrayList<Etiquette> etiquetteList;
+    public static EtiquetteListAdapter adapter = null;
+
     ImageButton tags;
     ImageButton places;
     ImageButton people;
@@ -42,6 +50,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
     EditText searchText;
 
     ListView list;
+
+    public static boolean showDialog = true;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -60,6 +70,12 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
     {
         super.onActivityCreated(bundle);
 
+        if(adapter == null) {
+            etiquetteList = new ArrayList<>();
+
+            adapter = new EtiquetteListAdapter(getActivity(), etiquetteList);
+        }
+
         searchText = (EditText)getActivity().findViewById(R.id.searchText);
 
         Bundle args = getArguments();
@@ -76,7 +92,44 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
             getEtiquette(Constants.TagScenario, params);
         }
 
+        EditText searchBox = (EditText)getActivity().findViewById(R.id.searchText);
+        searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    EditText search = (EditText)getActivity().findViewById(R.id.searchText);
+                    String name = search.getText().toString();
+                    if (name.length() < 1) {
+                        Toast.makeText(getActivity(), "Enter something", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    View v = getActivity().getCurrentFocus();
+                    if (v != null) {
+                        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
 
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    if(tagsSelected)
+                    {
+                        params.put("Hash_Tags", "#" + searchText.getText().toString());
+                        getEtiquette(Constants.TagScenario, params);
+                    }
+                    else if(placesSelected)
+                    {
+                        params.put("Location", searchText.getText().toString());
+                        getEtiquette(Constants.PlaceScenario, params);
+                    }
+                    else {
+                        params.put("User_Name", searchText.getText().toString());
+                        getEtiquette(Constants.UserScenario, params);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
 
         tags = (ImageButton)getActivity().findViewById(R.id.tags);
         tags.setOnClickListener(this);
@@ -92,7 +145,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
 
         list = (ListView)getActivity().findViewById(R.id.searchList);
 
-        list.setAdapter(MainActivity.adapter);
+        list.setAdapter(adapter);
 
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -225,7 +278,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements V
         params.put("language", "english");
 
         EtiquetteFetcher etiquetteFetcher = new EtiquetteFetcher();
-        etiquetteFetcher.getEtiquette(getActivity(), url, list, MainActivity.adapter, MainActivity.etiquetteList, params);
+        etiquetteFetcher.getEtiquette(getActivity(), url, list, adapter, etiquetteList, params, showDialog);
+        showDialog = false;
 
     }
 
