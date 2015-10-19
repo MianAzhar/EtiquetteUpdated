@@ -173,7 +173,8 @@
                     android:singleLine="true"
                     android:maxLength="25"
                     android:hint="@string/name"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp"
+                    android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
             </LinearLayout>
             <ImageView
                 android:layout_width="wrap_content"

@@ -271,7 +271,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ImageView imgview = (ImageView) this.findViewById(R.id.userpicture);
             TextView tv = (TextView) this.findViewById(R.id.unametv);
             tv.setText(uname);
-            Picasso.with(this).load(picture).into(imgview);
+            if(picture.length() > 0)
+                Picasso.with(this).load(picture).into(imgview);
 
 
             userName = user;

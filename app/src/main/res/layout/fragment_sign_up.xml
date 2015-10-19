@@ -20,6 +20,26 @@
         android:layout_height="wrap_content"
         android:background="@drawable/title_bar"/>
 
+<!--
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#dddddd"
+        android:id="@+id/relativeLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="PROFILE"
+            android:layout_marginTop="5dp"/>
+
+    </RelativeLayout>
+    -->
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -49,7 +69,8 @@
                 android:id="@+id/realName"
                 android:inputType="text"
                 android:imeOptions="actionDone"
-                android:maxLength="30" />
+                android:maxLength="30"
+                android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
 
             <ImageView
                 android:layout_width="fill_parent"

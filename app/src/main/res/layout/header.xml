@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/cancelMenu"
             android:layout_gravity="end"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="40dp"
             android:src="@drawable/cancelmusic"
             android:padding="5dp" />
     </FrameLayout>
@@ -31,7 +31,6 @@
         android:layout_height="100dp"
         android:id="@+id/userpicture"
         android:layout_marginTop="40dp"
-        android:src="@drawable/userpic"
         android:scaleType="fitXY"/>
 
     <TextView
