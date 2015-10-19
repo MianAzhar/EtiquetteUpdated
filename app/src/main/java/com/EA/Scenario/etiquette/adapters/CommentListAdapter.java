@@ -31,6 +31,12 @@ public class CommentListAdapter extends ArrayAdapter<CommentClass>
     }
 
     @Override
+    public int getCount()
+    {
+        return textList.size();
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
 

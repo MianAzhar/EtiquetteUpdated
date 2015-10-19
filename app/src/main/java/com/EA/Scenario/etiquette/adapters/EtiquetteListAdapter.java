@@ -35,6 +35,12 @@ public class EtiquetteListAdapter extends ArrayAdapter<Etiquette>
     }
 
     @Override
+    public int getCount()
+    {
+        return textList.size();
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         if(row == null) {
